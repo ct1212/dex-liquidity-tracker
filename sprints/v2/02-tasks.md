@@ -13,7 +13,7 @@
 - [x] Write tests for XAdapter error handling and response parsing
 - [x] Implement real GrokAdapter using xAI API
 - [x] Write tests for GrokAdapter error handling and response parsing
-- [ ] Implement real PriceAdapter using yahoo-finance2 or Alpha Vantage
+- [x] Implement real PriceAdapter using yahoo-finance2 or Alpha Vantage
 - [ ] Write tests for PriceAdapter error handling and response parsing
 - [ ] Create adapter factory that returns mock or real adapters based on env vars
 - [ ] Implement WhisperNumberTracker signal module with basic tweet analysis
