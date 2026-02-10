@@ -1,12 +1,38 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $# -lt 1 ]]; then
-  echo "Usage: scripts/sprint_prd.sh v1"
+# Defaults
+MODEL="sonnet"
+MAX_BUDGET="2.00"
+
+# Parse arguments
+SPRINT=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --model)
+      MODEL="$2"
+      shift 2
+      ;;
+    --max-budget-usd)
+      MAX_BUDGET="$2"
+      shift 2
+      ;;
+    -*)
+      echo "Unknown flag: $1"
+      exit 1
+      ;;
+    *)
+      SPRINT="$1"
+      shift
+      ;;
+  esac
+done
+
+if [[ -z "$SPRINT" ]]; then
+  echo "Usage: scripts/sprint_prd.sh <sprint> [--model sonnet] [--max-budget-usd 2.00]"
   exit 1
 fi
 
-SPRINT="$1"
 ROOT="$(git rev-parse --show-toplevel)"
 DIR="$ROOT/sprints/$SPRINT"
 
@@ -25,9 +51,14 @@ if ! command -v claude >/dev/null 2>&1; then
   exit 1
 fi
 
-PROMPT=$(
-cat <<'PROMPT'
-Read the file sprints/<SPRINT>/00-goal.md.
+GOAL_CONTENT="$(cat "$GOAL_FILE")"
+
+PROMPT="$(cat <<PROMPT
+Here is the goal file for sprint $SPRINT:
+
+---GOAL---
+$GOAL_CONTENT
+---ENDGOAL---
 
 Return output in EXACTLY this structure, with the markers on their own lines:
 
@@ -41,30 +72,42 @@ Rules:
 - PRD must include: Overview, Scope, Out of scope, Assumptions, Constraints, Architecture, Adapter interfaces, Acceptance criteria, Risks, Open questions.
 - Tasks must be an unchecked checklist. Each task is 5–20 minutes. Include tests early. Include a final docs and walkthrough task.
 PROMPT
-)
+)"
 
-PROMPT="${PROMPT//<SPRINT>/$SPRINT}"
+echo "Generating PRD and tasks for sprint $SPRINT (model: $MODEL, budget: \$$MAX_BUDGET)..."
 
-RAW="$(claude -p "$PROMPT")"
+RAW="$(claude -p \
+  --model "$MODEL" \
+  --max-turns 2 \
+  --dangerously-skip-permissions \
+  --max-budget-usd "$MAX_BUDGET" \
+  "$PROMPT")"
 
+# Robust marker parsing: trim leading/trailing whitespace before matching
 PRD_CONTENT="$(printf "%s\n" "$RAW" | awk '
-  $0=="---PRD---" {capture=1; next}
-  $0=="---TASKS---" {capture=0}
-  capture {print}
+  { trimmed = $0; gsub(/^[[:space:]]+|[[:space:]]+$/, "", trimmed) }
+  trimmed == "---PRD---" { capture=1; next }
+  trimmed == "---TASKS---" { capture=0 }
+  capture { print }
 ')"
 
 TASKS_CONTENT="$(printf "%s\n" "$RAW" | awk '
-  $0=="---TASKS---" {capture=1; next}
-  capture {print}
+  { trimmed = $0; gsub(/^[[:space:]]+|[[:space:]]+$/, "", trimmed) }
+  trimmed == "---TASKS---" { capture=1; next }
+  capture { print }
 ')"
 
 if [[ -z "${PRD_CONTENT//[[:space:]]/}" ]]; then
   echo "ERROR: PRD content was empty. Claude did not follow the required format."
+  echo "--- Raw output ---"
+  printf "%s\n" "$RAW" | head -20
   exit 1
 fi
 
 if [[ -z "${TASKS_CONTENT//[[:space:]]/}" ]]; then
   echo "ERROR: Tasks content was empty. Claude did not follow the required format."
+  echo "--- Raw output ---"
+  printf "%s\n" "$RAW" | head -20
   exit 1
 fi
 

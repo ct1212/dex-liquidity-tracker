@@ -1,12 +1,48 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $# -lt 1 ]]; then
-  echo "Usage: scripts/sprint_dev.sh v1"
+# Defaults
+MODEL="sonnet"
+MAX_BUDGET="5.00"
+LOOP=false
+DRY_RUN=false
+
+# Parse arguments
+SPRINT=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --model)
+      MODEL="$2"
+      shift 2
+      ;;
+    --max-budget-usd)
+      MAX_BUDGET="$2"
+      shift 2
+      ;;
+    --loop)
+      LOOP=true
+      shift
+      ;;
+    --dry-run)
+      DRY_RUN=true
+      shift
+      ;;
+    -*)
+      echo "Unknown flag: $1"
+      exit 1
+      ;;
+    *)
+      SPRINT="$1"
+      shift
+      ;;
+  esac
+done
+
+if [[ -z "$SPRINT" ]]; then
+  echo "Usage: scripts/sprint_dev.sh <sprint> [--loop] [--dry-run] [--model sonnet] [--max-budget-usd 5.00]"
   exit 1
 fi
 
-SPRINT="$1"
 ROOT="$(git rev-parse --show-toplevel)"
 DIR="$ROOT/sprints/$SPRINT"
 TASKS_FILE="$DIR/02-tasks.md"
@@ -24,110 +60,196 @@ fi
 
 cd "$ROOT"
 
-# Require clean working tree
-if [[ -n "$(git status --porcelain)" ]]; then
-  echo "Working tree is not clean. Commit or stash changes first."
-  exit 1
-fi
+run_one_task() {
+  # Require clean working tree (skip for dry-run)
+  if [[ "$DRY_RUN" != true && -n "$(git status --porcelain)" ]]; then
+    echo "Working tree is not clean. Commit or stash changes first."
+    return 1
+  fi
 
-# Find first unchecked task line
-NEXT_TASK_LINE="$(grep -nE '^\s*[-*]\s*\[\s\]\s+' "$TASKS_FILE" | head -n 1 || true)"
-if [[ -z "$NEXT_TASK_LINE" ]]; then
-  echo "No unchecked tasks found in $TASKS_FILE"
-  exit 0
-fi
+  # Find first unchecked task line
+  local NEXT_TASK_LINE
+  NEXT_TASK_LINE="$(grep -nE '^\s*[-*]\s*\[\s\]\s+' "$TASKS_FILE" | head -n 1 || true)"
+  if [[ -z "$NEXT_TASK_LINE" ]]; then
+    echo "No unchecked tasks found in $TASKS_FILE"
+    return 2
+  fi
 
-LINE_NO="${NEXT_TASK_LINE%%:*}"
-TASK_TEXT="$(echo "$NEXT_TASK_LINE" | sed -E 's/^[0-9]+:\s*[-*]\s*\[\s\]\s+//')"
+  local LINE_NO="${NEXT_TASK_LINE%%:*}"
+  local TASK_TEXT
+  TASK_TEXT="$(echo "$NEXT_TASK_LINE" | sed -E 's/^[0-9]+:\s*[-*]\s*\[\s\]\s+//')"
 
-echo "Next task: $TASK_TEXT"
+  echo "=== Task: $TASK_TEXT ==="
 
-PROMPT=$(
-cat <<'PROMPT'
-You are working inside a git repository.
+  if [[ "$DRY_RUN" == true ]]; then
+    echo "[dry-run] Would execute task on line $LINE_NO: $TASK_TEXT"
+    return 2  # signal stop (no more work to do in dry-run)
+  fi
 
-Goal:
-Implement exactly the next unchecked task from sprints/<SPRINT>/02-tasks.md.
+  # Build context: task list + package.json
+  local TASKS_CONTENT
+  TASKS_CONTENT="$(cat "$TASKS_FILE")"
+  local PKG_CONTENT=""
+  if [[ -f "$ROOT/package.json" ]]; then
+    PKG_CONTENT="$(cat "$ROOT/package.json")"
+  fi
 
-Project defaults for this repo:
-Node and TypeScript
-ESM modules
-Vitest for tests
-No global installs
-No sudo
+  local PROMPT
+  PROMPT="$(cat <<ENDPROMPT
+You are working inside a git repository at $ROOT.
 
-Rules:
-Implement only one task.
-Make the smallest correct change.
-Add tests if reasonable for the task.
-Update docs only if the task requires it.
+## Your task
 
-Output a unified diff patch only, in this exact format:
+Implement exactly this task:
+$TASK_TEXT
 
----PATCH---
-<unified diff here>
----ENDPATCH---
+## Full task list (for context)
 
-No extra commentary.
-PROMPT
-)
+$TASKS_CONTENT
 
-PROMPT="${PROMPT//<SPRINT>/$SPRINT}"
+## package.json
 
-RAW="$(claude -p "$PROMPT")"
+$PKG_CONTENT
 
-PATCH="$(printf "%s\n" "$RAW" | awk '
-  $0=="---PATCH---" {capture=1; next}
-  $0=="---ENDPATCH---" {capture=0}
-  capture {print}
-')"
+## Rules
 
-if [[ -z "${PATCH//[[:space:]]/}" ]]; then
-  echo "ERROR: Patch was empty or missing markers."
-  exit 1
-fi
+- Implement only the single task above.
+- Make the smallest correct change.
+- Add tests if reasonable for the task.
+- Update docs only if the task requires it.
+- Run \`npm test\` and \`npm run lint\` when done to verify your changes pass.
+- Do NOT commit. The calling script handles commits.
 
-# Apply patch
-printf "%s\n" "$PATCH" | git apply
+Project defaults:
+- Node.js and TypeScript (ESM modules)
+- Vitest for tests
+- ESLint + Prettier for linting
+- No global installs, no sudo
+ENDPROMPT
+)"
 
-# Mark the task as done in tasks file
-# Replace the first unchecked box on that specific line number
-# This is safer than a global replace
-TMP_FILE="$(mktemp)"
-awk -v line="$LINE_NO" '
-  NR==line {sub(/\[\s\]/,"[x]"); print; next}
-  {print}
-' "$TASKS_FILE" > "$TMP_FILE"
-mv "$TMP_FILE" "$TASKS_FILE"
+  # Let Claude directly edit files using its built-in tools
+  echo "Running Claude (model: $MODEL, budget: \$$MAX_BUDGET)..."
+  claude -p \
+    --model "$MODEL" \
+    --dangerously-skip-permissions \
+    --max-budget-usd "$MAX_BUDGET" \
+    --allowedTools "Read" "Write" "Edit" "Glob" "Grep" "Bash(npm:*)" "Bash(npx:*)" \
+    "$PROMPT" || {
+      echo "ERROR: Claude exited with non-zero status."
+      git checkout .
+      return 1
+    }
 
-# Update status
-{
-  echo
-  echo "[$(date -u +"%Y-%m-%d %H:%M:%S UTC")]"
-  echo "Completed task: $TASK_TEXT"
-  echo "Next: run ./scripts/sprint_dev.sh <SPRINT> again for the next task"
-} >> "$STATUS_FILE"
+  # Check if any files were actually changed
+  local CHANGED_FILES
+  CHANGED_FILES="$(git diff --name-only)"
+  local UNTRACKED_FILES
+  UNTRACKED_FILES="$(git ls-files --others --exclude-standard)"
 
-# Try to run checks if present
-if [[ -f "package.json" ]]; then
+  if [[ -z "$CHANGED_FILES" && -z "$UNTRACKED_FILES" ]]; then
+    echo "WARNING: No files were changed. Skipping commit."
+    return 1
+  fi
+
   # Install deps if node_modules missing
-  if [[ ! -d "node_modules" ]]; then
+  if [[ -f "package.json" && ! -d "node_modules" ]]; then
     npm install
   fi
 
-  # Run lint if defined
-  if npm run | grep -qE '^\s*lint'; then
-    npm run lint || true
+  # Run lint — fail and revert on error
+  if [[ -f "package.json" ]] && npm run 2>/dev/null | grep -qE '^\s*lint'; then
+    echo "Running lint..."
+    if ! npm run lint; then
+      echo "ERROR: Lint failed. Reverting changes."
+      git checkout .
+      # Clean up untracked files that were added
+      if [[ -n "$UNTRACKED_FILES" ]]; then
+        echo "$UNTRACKED_FILES" | xargs rm -f
+      fi
+      {
+        echo
+        echo "[$(date -u +"%Y-%m-%d %H:%M:%S UTC")]"
+        echo "FAILED task (lint): $TASK_TEXT"
+      } >> "$STATUS_FILE"
+      return 1
+    fi
   fi
 
-  # Run tests if defined
-  if npm run | grep -qE '^\s*test'; then
-    npm test || true
+  # Run tests — fail and revert on error
+  if [[ -f "package.json" ]] && npm run 2>/dev/null | grep -qE '^\s*test'; then
+    echo "Running tests..."
+    if ! npm test; then
+      echo "ERROR: Tests failed. Reverting changes."
+      git checkout .
+      if [[ -n "$UNTRACKED_FILES" ]]; then
+        echo "$UNTRACKED_FILES" | xargs rm -f
+      fi
+      {
+        echo
+        echo "[$(date -u +"%Y-%m-%d %H:%M:%S UTC")]"
+        echo "FAILED task (tests): $TASK_TEXT"
+      } >> "$STATUS_FILE"
+      return 1
+    fi
+  fi
+
+  # Mark the task as done in tasks file
+  local TMP_FILE
+  TMP_FILE="$(mktemp)"
+  awk -v line="$LINE_NO" '
+    NR==line {sub(/\[\s\]/,"[x]"); print; next}
+    {print}
+  ' "$TASKS_FILE" > "$TMP_FILE"
+  mv "$TMP_FILE" "$TASKS_FILE"
+
+  # Update status with actual sprint name
+  {
+    echo
+    echo "[$(date -u +"%Y-%m-%d %H:%M:%S UTC")]"
+    echo "Completed task: $TASK_TEXT"
+    echo "Next: run ./scripts/sprint_dev.sh $SPRINT again for the next task"
+  } >> "$STATUS_FILE"
+
+  # Stage only changed and new files (not git add -A)
+  if [[ -n "$CHANGED_FILES" ]]; then
+    echo "$CHANGED_FILES" | xargs git add
+  fi
+  if [[ -n "$UNTRACKED_FILES" ]]; then
+    echo "$UNTRACKED_FILES" | xargs git add
+  fi
+  # Always stage the tasks file and status file (they were updated above)
+  git add "$TASKS_FILE" "$STATUS_FILE"
+
+  git commit -m "sprint $SPRINT task: $TASK_TEXT"
+  echo "OK: committed task"
+  return 0
+}
+
+# Main execution
+if [[ "$LOOP" == true ]]; then
+  echo "Loop mode: processing all remaining tasks for sprint $SPRINT"
+  while true; do
+    rc=0
+    run_one_task || rc=$?
+    if [[ $rc -eq 2 ]]; then
+      # No more tasks (or dry-run)
+      break
+    elif [[ $rc -ne 0 ]]; then
+      echo "Task failed. Stopping loop."
+      exit 1
+    fi
+    echo ""
+    echo "--- Moving to next task ---"
+    echo ""
+  done
+  echo "All tasks processed."
+else
+  rc=0
+  run_one_task || rc=$?
+  if [[ $rc -eq 2 ]]; then
+    exit 0  # no tasks found is not an error
+  elif [[ $rc -ne 0 ]]; then
+    exit 1
   fi
 fi
-
-git add -A
-git commit -m "sprint $SPRINT task: $TASK_TEXT"
-
-echo "OK: committed task"
-

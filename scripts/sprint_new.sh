@@ -19,23 +19,46 @@ if [[ -z "$GOAL" ]]; then
 fi
 
 cat > "$DIR/00-goal.md" <<EOG
-Goal
+# Goal
 
 $GOAL
 
-Constraints
+# Stack
 
-Keep scope small.
-Prefer local installs only.
-No global installs.
-No sudo.
+- Node.js / TypeScript (ESM)
+- Vitest for testing
+- ESLint + Prettier for linting/formatting
 
-Done when
+# Constraints
 
-List concrete acceptance criteria here.
+- Keep scope small.
+- Prefer local installs only.
+- No global installs.
+- No sudo.
+
+# Done when
+
+- List concrete acceptance criteria here.
 EOG
+
+# Create placeholder files so the directory structure is complete
+if [[ ! -f "$DIR/01-prd.md" ]]; then
+  cat > "$DIR/01-prd.md" <<EOF
+# PRD — Sprint $SPRINT
+
+_Run \`./scripts/sprint_prd.sh $SPRINT\` to generate._
+EOF
+fi
+
+if [[ ! -f "$DIR/02-tasks.md" ]]; then
+  cat > "$DIR/02-tasks.md" <<EOF
+# Tasks — Sprint $SPRINT
+
+_Run \`./scripts/sprint_prd.sh $SPRINT\` to generate._
+EOF
+fi
 
 touch "$DIR/03-status.md"
 
 echo "Created sprint $SPRINT"
-echo "Next: review sprints/$SPRINT/00-goal.md"
+echo "Next: review sprints/$SPRINT/00-goal.md, then run ./scripts/sprint_prd.sh $SPRINT"
