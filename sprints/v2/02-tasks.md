@@ -26,7 +26,7 @@
 - [x] Write tests for FearCompressionScan sentiment tracking
 - [x] Implement MacroToMicroTranslation signal module
 - [x] Write tests for MacroToMicroTranslation correlation logic
-- [ ] Implement ManagementCredibilitySignal signal module
+- [x] Implement ManagementCredibilitySignal signal module
 - [ ] Write tests for ManagementCredibilitySignal tone analysis
 - [ ] Implement EarlyMemeFormationDetector signal module
 - [ ] Write tests for EarlyMemeFormationDetector language patterns
