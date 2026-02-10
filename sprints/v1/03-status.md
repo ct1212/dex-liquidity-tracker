@@ -26,3 +26,7 @@ Next: run ./scripts/sprint_dev.sh <SPRINT> again for the next task
 [2026-02-10 16:10:48 UTC]
 Completed task: Write unit tests for MockAdapter interface compliance
 Next: run ./scripts/sprint_dev.sh <SPRINT> again for the next task
+
+[2026-02-10 16:13:37 UTC]
+Completed task: Create CLI entry point in src/cli.ts
+Next: run ./scripts/sprint_dev.sh <SPRINT> again for the next task

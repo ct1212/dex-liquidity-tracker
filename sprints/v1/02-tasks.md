@@ -4,7 +4,7 @@
 - [x] Define DexAdapter interface and types in src/adapters/types.ts
 - [x] Implement MockAdapter class in src/adapters/mock-adapter.ts
 - [x] Write unit tests for MockAdapter interface compliance
-- [ ] Create CLI entry point in src/cli.ts
+- [x] Create CLI entry point in src/cli.ts
 - [ ] Wire CLI to use MockAdapter and output results
 - [ ] Add integration test for CLI flow
 - [ ] Install and configure testing framework (Jest/Vitest)
