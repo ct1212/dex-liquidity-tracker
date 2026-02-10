@@ -1,0 +1,27 @@
+{
+  "name": "dex-liquidity-tracker",
+  "version": "0.1.0",
+  "description": "DEX liquidity tracking tool",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "vitest",
+    "build": "tsc",
+    "start": "node dist/cli.js"
+  },
+  "keywords": [
+    "dex",
+    "liquidity",
+    "blockchain"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
