@@ -31,7 +31,7 @@
 - [x] Implement EarlyMemeFormationDetector signal module
 - [x] Write tests for EarlyMemeFormationDetector language patterns
 - [x] Implement RegulatoryTailwindRadar signal module
-- [ ] Write tests for RegulatoryTailwindRadar keyword matching
+- [x] Write tests for RegulatoryTailwindRadar keyword matching
 - [ ] Implement GlobalEdgeFinder signal module
 - [ ] Write tests for GlobalEdgeFinder geographic filtering
 - [ ] Implement FuturePricePathSimulation signal module with 3-path model
