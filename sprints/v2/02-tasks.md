@@ -18,7 +18,7 @@
 - [x] Create adapter factory that returns mock or real adapters based on env vars
 - [x] Implement WhisperNumberTracker signal module with basic tweet analysis
 - [x] Write tests for WhisperNumberTracker data transformation
-- [ ] Implement CrowdedTradeExitSignal signal module
+- [x] Implement CrowdedTradeExitSignal signal module
 - [ ] Write tests for CrowdedTradeExitSignal logic
 - [ ] Implement SmallCapSmartMoney signal module
 - [ ] Write tests for SmallCapSmartMoney filtering
