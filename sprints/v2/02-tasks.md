@@ -6,7 +6,7 @@
 - [x] Implement MockXAdapter with sample tweet data
 - [x] Write tests for MockXAdapter (search, user profile, engagement)
 - [x] Implement MockGrokAdapter with sample sentiment and narrative data
-- [ ] Write tests for MockGrokAdapter (sentiment, narratives, classification)
+- [x] Write tests for MockGrokAdapter (sentiment, narratives, classification)
 - [ ] Implement MockPriceAdapter with sample historical price data
 - [ ] Write tests for MockPriceAdapter (current price, historical prices)
 - [ ] Implement real XAdapter using X API v2 SDK or fetch
