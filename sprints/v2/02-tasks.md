@@ -3,7 +3,7 @@
 - [x] Define TypeScript interfaces for Tweet, UserProfile, EngagementMetrics in `src/types/tweets.ts`
 - [x] Define TypeScript interfaces for SentimentAnalysis, Narrative, SignalClassification in `src/types/signals.ts`
 - [x] Define adapter interfaces (XAdapter, GrokAdapter, PriceAdapter) in `src/types/adapters.ts`
-- [ ] Implement MockXAdapter with sample tweet data
+- [x] Implement MockXAdapter with sample tweet data
 - [ ] Write tests for MockXAdapter (search, user profile, engagement)
 - [ ] Implement MockGrokAdapter with sample sentiment and narrative data
 - [ ] Write tests for MockGrokAdapter (sentiment, narratives, classification)
