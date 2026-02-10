@@ -32,6 +32,7 @@ Next: run ./scripts/sprint_dev.sh <SPRINT> again for the next task
 
 [2026-02-10 16:58:00 UTC]
 Sprint v1 completed. All 18 tasks done.
+
 - Added @types/node for TypeScript compilation
 - Fixed tsconfig to use NodeNext module resolution for proper ESM output
 - Added CLI integration tests (3 tests)
@@ -42,6 +43,7 @@ Sprint v1 completed. All 18 tasks done.
 - Updated .gitignore to exclude data/
 
 Final verification:
+
 - npm run build: OK
 - npm test: 10 tests passing (3 files)
 - npm run lint: clean (eslint + prettier)

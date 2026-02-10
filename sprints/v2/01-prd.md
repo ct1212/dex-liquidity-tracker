@@ -7,6 +7,7 @@ Build a web dashboard that analyzes X (Twitter) for stock market signals using t
 ## Scope
 
 ### In Scope
+
 - 10 signal analysis panels:
   1. Whisper Number Tracker
   2. Crowded Trade Exit Signal
@@ -28,6 +29,7 @@ Build a web dashboard that analyzes X (Twitter) for stock market signals using t
 - Local development server
 
 ### Out of Scope
+
 - User authentication or multi-user support
 - Database persistence (in-memory cache acceptable)
 - Deployment infrastructure
@@ -57,6 +59,7 @@ Build a web dashboard that analyzes X (Twitter) for stock market signals using t
 ## Architecture
 
 ### High-Level Structure
+
 ```
 src/
 ├── api/
@@ -101,6 +104,7 @@ src/
 ```
 
 ### Data Flow
+
 1. User opens dashboard → UI requests signal data from API
 2. API routes delegate to signal modules
 3. Signal modules use adapters (real or mock based on env)
@@ -112,6 +116,7 @@ src/
 ## Adapter Interfaces
 
 ### XAdapter Interface
+
 ```typescript
 interface XAdapter {
   searchTweets(query: string, options?: SearchOptions): Promise<Tweet[]>;
@@ -129,6 +134,7 @@ interface Tweet {
 ```
 
 ### GrokAdapter Interface
+
 ```typescript
 interface GrokAdapter {
   analyzeSentiment(texts: string[]): Promise<SentimentAnalysis[]>;
@@ -138,13 +144,14 @@ interface GrokAdapter {
 
 interface SentimentAnalysis {
   text: string;
-  sentiment: 'bullish' | 'bearish' | 'neutral';
+  sentiment: "bullish" | "bearish" | "neutral";
   confidence: number;
   keywords: string[];
 }
 ```
 
 ### PriceAdapter Interface
+
 ```typescript
 interface PriceAdapter {
   getCurrentPrice(ticker: string): Promise<number>;
