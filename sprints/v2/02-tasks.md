@@ -9,7 +9,7 @@
 - [x] Write tests for MockGrokAdapter (sentiment, narratives, classification)
 - [x] Implement MockPriceAdapter with sample historical price data
 - [x] Write tests for MockPriceAdapter (current price, historical prices)
-- [ ] Implement real XAdapter using X API v2 SDK or fetch
+- [x] Implement real XAdapter using X API v2 SDK or fetch
 - [ ] Write tests for XAdapter error handling and response parsing
 - [ ] Implement real GrokAdapter using xAI API
 - [ ] Write tests for GrokAdapter error handling and response parsing

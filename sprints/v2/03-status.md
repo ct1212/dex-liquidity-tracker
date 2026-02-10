@@ -40,3 +40,7 @@ Next: run ./scripts/sprint_dev.sh v2 again for the next task
 [2026-02-10 17:51:33 UTC]
 Completed task: Write tests for MockPriceAdapter (current price, historical prices)
 Next: run ./scripts/sprint_dev.sh v2 again for the next task
+
+[2026-02-10 17:53:14 UTC]
+Completed task: Implement real XAdapter using X API v2 SDK or fetch
+Next: run ./scripts/sprint_dev.sh v2 again for the next task
