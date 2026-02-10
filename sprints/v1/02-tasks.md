@@ -1,7 +1,7 @@
 - [x] Initialize Node.js project with package.json
 - [x] Install and configure TypeScript locally
 - [x] Create basic project directory structure (src/, tests/, etc.)
-- [ ] Define DexAdapter interface and types in src/adapters/types.ts
+- [x] Define DexAdapter interface and types in src/adapters/types.ts
 - [ ] Implement MockAdapter class in src/adapters/mock-adapter.ts
 - [ ] Write unit tests for MockAdapter interface compliance
 - [ ] Create CLI entry point in src/cli.ts
