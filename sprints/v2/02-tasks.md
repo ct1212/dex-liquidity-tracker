@@ -29,7 +29,7 @@
 - [x] Implement ManagementCredibilitySignal signal module
 - [x] Write tests for ManagementCredibilitySignal tone analysis
 - [x] Implement EarlyMemeFormationDetector signal module
-- [ ] Write tests for EarlyMemeFormationDetector language patterns
+- [x] Write tests for EarlyMemeFormationDetector language patterns
 - [ ] Implement RegulatoryTailwindRadar signal module
 - [ ] Write tests for RegulatoryTailwindRadar keyword matching
 - [ ] Implement GlobalEdgeFinder signal module
