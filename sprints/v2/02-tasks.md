@@ -37,7 +37,7 @@
 - [x] Implement FuturePricePathSimulation signal module with 3-path model
 - [x] Write tests for FuturePricePathSimulation path generation
 - [x] Set up Express server in `src/api/server.ts` with CORS and JSON middleware
-- [ ] Create `/api/signals/:signalType` route that calls appropriate signal module
+- [x] Create `/api/signals/:signalType` route that calls appropriate signal module
 - [ ] Write tests for API routes (mock adapter injection)
 - [ ] Set up React app in `src/ui/App.tsx` with basic layout
 - [ ] Create DemoBanner component that checks for API keys and displays warning
