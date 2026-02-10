@@ -27,7 +27,7 @@
 - [x] Implement MacroToMicroTranslation signal module
 - [x] Write tests for MacroToMicroTranslation correlation logic
 - [x] Implement ManagementCredibilitySignal signal module
-- [ ] Write tests for ManagementCredibilitySignal tone analysis
+- [x] Write tests for ManagementCredibilitySignal tone analysis
 - [ ] Implement EarlyMemeFormationDetector signal module
 - [ ] Write tests for EarlyMemeFormationDetector language patterns
 - [ ] Implement RegulatoryTailwindRadar signal module
