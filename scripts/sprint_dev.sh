@@ -130,12 +130,11 @@ ENDPROMPT
 
   # Let Claude directly edit files using its built-in tools
   echo "Running Claude (model: $MODEL, budget: \$$MAX_BUDGET)..."
-  claude -p \
+  printf "%s" "$PROMPT" | claude -p \
     --model "$MODEL" \
     --dangerously-skip-permissions \
     --max-budget-usd "$MAX_BUDGET" \
-    --allowedTools "Read" "Write" "Edit" "Glob" "Grep" "Bash(npm:*)" "Bash(npx:*)" \
-    "$PROMPT" || {
+    --allowedTools "Read" "Write" "Edit" "Glob" "Grep" "Bash(npm:*)" "Bash(npx:*)" || {
       echo "ERROR: Claude exited with non-zero status."
       git checkout .
       return 1
