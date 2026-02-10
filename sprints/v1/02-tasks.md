@@ -3,7 +3,7 @@
 - [x] Create basic project directory structure (src/, tests/, etc.)
 - [x] Define DexAdapter interface and types in src/adapters/types.ts
 - [x] Implement MockAdapter class in src/adapters/mock-adapter.ts
-- [ ] Write unit tests for MockAdapter interface compliance
+- [x] Write unit tests for MockAdapter interface compliance
 - [ ] Create CLI entry point in src/cli.ts
 - [ ] Wire CLI to use MockAdapter and output results
 - [ ] Add integration test for CLI flow
