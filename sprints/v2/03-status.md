@@ -156,3 +156,7 @@ Next: run ./scripts/sprint_dev.sh v2 again for the next task
 [2026-02-10 19:54:44 UTC]
 Completed task: Create `/api/signals/:signalType` route that calls appropriate signal module
 Next: run ./scripts/sprint_dev.sh v2 again for the next task
+
+[2026-02-10 19:59:14 UTC]
+Completed task: Write tests for API routes (mock adapter injection)
+Next: run ./scripts/sprint_dev.sh v2 again for the next task
