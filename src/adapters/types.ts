@@ -27,4 +27,3 @@ export interface DexAdapter {
    */
   getSupportedPools(): Promise<string[]>;
 }
-
