@@ -18,3 +18,7 @@ Next: run ./scripts/sprint_dev.sh <SPRINT> again for the next task
 [2026-02-10 15:40:34 UTC]
 Completed task: Define DexAdapter interface and types in src/adapters/types.ts
 Next: run ./scripts/sprint_dev.sh <SPRINT> again for the next task
+
+[2026-02-10 15:42:59 UTC]
+Completed task: Implement MockAdapter class in src/adapters/mock-adapter.ts
+Next: run ./scripts/sprint_dev.sh <SPRINT> again for the next task
