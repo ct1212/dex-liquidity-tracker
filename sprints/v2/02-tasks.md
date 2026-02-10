@@ -24,7 +24,7 @@
 - [x] Write tests for SmallCapSmartMoney filtering
 - [x] Implement FearCompressionScan signal module
 - [x] Write tests for FearCompressionScan sentiment tracking
-- [ ] Implement MacroToMicroTranslation signal module
+- [x] Implement MacroToMicroTranslation signal module
 - [ ] Write tests for MacroToMicroTranslation correlation logic
 - [ ] Implement ManagementCredibilitySignal signal module
 - [ ] Write tests for ManagementCredibilitySignal tone analysis
