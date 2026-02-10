@@ -12,7 +12,7 @@
 - [x] Implement real XAdapter using X API v2 SDK or fetch
 - [x] Write tests for XAdapter error handling and response parsing
 - [x] Implement real GrokAdapter using xAI API
-- [ ] Write tests for GrokAdapter error handling and response parsing
+- [x] Write tests for GrokAdapter error handling and response parsing
 - [ ] Implement real PriceAdapter using yahoo-finance2 or Alpha Vantage
 - [ ] Write tests for PriceAdapter error handling and response parsing
 - [ ] Create adapter factory that returns mock or real adapters based on env vars
