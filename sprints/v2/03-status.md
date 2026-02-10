@@ -12,3 +12,7 @@ Next: run ./scripts/sprint_dev.sh v2 again for the next task
 [2026-02-10 17:38:56 UTC]
 Completed task: Define TypeScript interfaces for Tweet, UserProfile, EngagementMetrics in `src/types/tweets.ts`
 Next: run ./scripts/sprint_dev.sh v2 again for the next task
+
+[2026-02-10 17:39:46 UTC]
+Completed task: Define TypeScript interfaces for SentimentAnalysis, Narrative, SignalClassification in `src/types/signals.ts`
+Next: run ./scripts/sprint_dev.sh v2 again for the next task
