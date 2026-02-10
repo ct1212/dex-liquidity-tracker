@@ -5,7 +5,7 @@
 - [x] Define adapter interfaces (XAdapter, GrokAdapter, PriceAdapter) in `src/types/adapters.ts`
 - [x] Implement MockXAdapter with sample tweet data
 - [x] Write tests for MockXAdapter (search, user profile, engagement)
-- [ ] Implement MockGrokAdapter with sample sentiment and narrative data
+- [x] Implement MockGrokAdapter with sample sentiment and narrative data
 - [ ] Write tests for MockGrokAdapter (sentiment, narratives, classification)
 - [ ] Implement MockPriceAdapter with sample historical price data
 - [ ] Write tests for MockPriceAdapter (current price, historical prices)
