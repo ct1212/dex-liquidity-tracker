@@ -19,7 +19,7 @@
 - [x] Implement WhisperNumberTracker signal module with basic tweet analysis
 - [x] Write tests for WhisperNumberTracker data transformation
 - [x] Implement CrowdedTradeExitSignal signal module
-- [ ] Write tests for CrowdedTradeExitSignal logic
+- [x] Write tests for CrowdedTradeExitSignal logic
 - [ ] Implement SmallCapSmartMoney signal module
 - [ ] Write tests for SmallCapSmartMoney filtering
 - [ ] Implement FearCompressionScan signal module
