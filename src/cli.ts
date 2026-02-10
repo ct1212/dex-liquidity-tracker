@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { MockAdapter } from "./adapters/mock-adapter";
+import { MockAdapter } from "./adapters/mock-adapter.js";
 
 async function main() {
   const args = process.argv.slice(2);
@@ -9,9 +9,7 @@ async function main() {
     console.error("Usage: dex-liquidity-tracker <poolAddress>");
     console.error("");
     console.error("Example:");
-    console.error(
-      "  npx tsx src/cli.ts 0x1234567890abcdef1234567890abcdef12345678"
-    );
+    console.error("  npx tsx src/cli.ts 0x1234567890abcdef1234567890abcdef12345678");
     process.exit(1);
   }
 

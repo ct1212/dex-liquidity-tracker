@@ -5,15 +5,15 @@
 - [x] Implement MockAdapter class in src/adapters/mock-adapter.ts
 - [x] Write unit tests for MockAdapter interface compliance
 - [x] Create CLI entry point in src/cli.ts
-- [ ] Wire CLI to use MockAdapter and output results
-- [ ] Add integration test for CLI flow
-- [ ] Install and configure testing framework (Jest/Vitest)
-- [ ] Run tests and verify they pass
-- [ ] Install and configure ESLint and Prettier
-- [ ] Fix any linting issues
-- [ ] Add npm scripts for build, test, lint, and start
-- [ ] Write README with setup instructions and usage examples
-- [ ] Create .gitignore for node_modules and build artifacts
-- [ ] Commit all changes to git
-- [ ] Perform final walkthrough: run install, build, test, lint, and start commands
-- [ ] Document any learnings or issues in sprint retrospective
+- [x] Wire CLI to use MockAdapter and output results
+- [x] Add integration test for CLI flow
+- [x] Install and configure testing framework (Jest/Vitest)
+- [x] Run tests and verify they pass
+- [x] Install and configure ESLint and Prettier
+- [x] Fix any linting issues
+- [x] Add npm scripts for build, test, lint, and start
+- [x] Write README with setup instructions and usage examples
+- [x] Create .gitignore for node_modules and build artifacts
+- [x] Commit all changes to git
+- [x] Perform final walkthrough: run install, build, test, lint, and start commands
+- [x] Document any learnings or issues in sprint retrospective

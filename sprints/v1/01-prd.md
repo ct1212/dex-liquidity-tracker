@@ -1,9 +1,11 @@
 # DEX Liquidity Tracker - Sprint v1
 
 ## Overview
+
 Build the foundational project skeleton for a DEX liquidity tracker system. This sprint establishes the core adapter interface pattern that will allow pluggable DEX integrations, along with a minimal test harness to validate the architecture works end-to-end.
 
 ## Scope
+
 - Project initialization with TypeScript/Node.js tooling
 - Define adapter interface for DEX integrations (generic liquidity pool querying)
 - Implement one minimal mock adapter for testing purposes
@@ -13,6 +15,7 @@ Build the foundational project skeleton for a DEX liquidity tracker system. This
 - Add basic README with setup and usage instructions
 
 ## Out of Scope
+
 - Real DEX integrations (Uniswap, Sushiswap, etc.)
 - Database persistence
 - API or web interface
@@ -21,12 +24,14 @@ Build the foundational project skeleton for a DEX liquidity tracker system. This
 - Rate limiting or caching
 
 ## Assumptions
+
 - Using local Node.js environment (no global dependencies)
 - TypeScript for type safety
 - Target is local development/testing only
 - Mock data is acceptable for initial validation
 
 ## Constraints
+
 - No global npm packages
 - No sudo commands
 - Keep dependencies minimal
@@ -36,6 +41,7 @@ Build the foundational project skeleton for a DEX liquidity tracker system. This
 ## Architecture
 
 ### Components
+
 1. **Adapter Interface** (`src/adapters/types.ts`)
    - Defines the contract for DEX adapters
    - Methods: `getPoolLiquidity(poolAddress: string)`, `getSupportedPools()`
@@ -57,6 +63,7 @@ Build the foundational project skeleton for a DEX liquidity tracker system. This
 ## Adapter Interfaces
 
 ### Core Interface
+
 ```typescript
 interface DexAdapter {
   name: string;
@@ -82,6 +89,7 @@ interface TokenInfo {
 ```
 
 ## Acceptance Criteria
+
 - [ ] Project runs `npm install` without requiring global packages or sudo
 - [ ] TypeScript compiles without errors
 - [ ] Mock adapter implements the DexAdapter interface
@@ -92,10 +100,12 @@ interface TokenInfo {
 - [ ] All code is committed to git
 
 ## Risks
+
 - Adapter interface may need refinement when real DEX integrations are added
 - Mock data may not reflect realistic edge cases
 
 ## Open Questions
+
 - What testing framework should we use? (Jest, Vitest, Mocha?)
 - Should we use ES modules or CommonJS?
 - Do we need environment variable configuration at this stage?
