@@ -33,7 +33,7 @@
 - [x] Implement RegulatoryTailwindRadar signal module
 - [x] Write tests for RegulatoryTailwindRadar keyword matching
 - [x] Implement GlobalEdgeFinder signal module
-- [ ] Write tests for GlobalEdgeFinder geographic filtering
+- [x] Write tests for GlobalEdgeFinder geographic filtering
 - [ ] Implement FuturePricePathSimulation signal module with 3-path model
 - [ ] Write tests for FuturePricePathSimulation path generation
 - [ ] Set up Express server in `src/api/server.ts` with CORS and JSON middleware
