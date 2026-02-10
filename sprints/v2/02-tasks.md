@@ -1,0 +1,56 @@
+- [ ] Set up project structure with `src/api`, `src/adapters`, `src/signals`, `src/ui` directories
+- [ ] Configure environment variables in `.env.example` for X_API_KEY, X_API_SECRET, GROK_API_KEY, PRICE_API_KEY
+- [ ] Define TypeScript interfaces for Tweet, UserProfile, EngagementMetrics in `src/types/tweets.ts`
+- [ ] Define TypeScript interfaces for SentimentAnalysis, Narrative, SignalClassification in `src/types/signals.ts`
+- [ ] Define adapter interfaces (XAdapter, GrokAdapter, PriceAdapter) in `src/types/adapters.ts`
+- [ ] Implement MockXAdapter with sample tweet data
+- [ ] Write tests for MockXAdapter (search, user profile, engagement)
+- [ ] Implement MockGrokAdapter with sample sentiment and narrative data
+- [ ] Write tests for MockGrokAdapter (sentiment, narratives, classification)
+- [ ] Implement MockPriceAdapter with sample historical price data
+- [ ] Write tests for MockPriceAdapter (current price, historical prices)
+- [ ] Implement real XAdapter using X API v2 SDK or fetch
+- [ ] Write tests for XAdapter error handling and response parsing
+- [ ] Implement real GrokAdapter using xAI API
+- [ ] Write tests for GrokAdapter error handling and response parsing
+- [ ] Implement real PriceAdapter using yahoo-finance2 or Alpha Vantage
+- [ ] Write tests for PriceAdapter error handling and response parsing
+- [ ] Create adapter factory that returns mock or real adapters based on env vars
+- [ ] Implement WhisperNumberTracker signal module with basic tweet analysis
+- [ ] Write tests for WhisperNumberTracker data transformation
+- [ ] Implement CrowdedTradeExitSignal signal module
+- [ ] Write tests for CrowdedTradeExitSignal logic
+- [ ] Implement SmallCapSmartMoney signal module
+- [ ] Write tests for SmallCapSmartMoney filtering
+- [ ] Implement FearCompressionScan signal module
+- [ ] Write tests for FearCompressionScan sentiment tracking
+- [ ] Implement MacroToMicroTranslation signal module
+- [ ] Write tests for MacroToMicroTranslation correlation logic
+- [ ] Implement ManagementCredibilitySignal signal module
+- [ ] Write tests for ManagementCredibilitySignal tone analysis
+- [ ] Implement EarlyMemeFormationDetector signal module
+- [ ] Write tests for EarlyMemeFormationDetector language patterns
+- [ ] Implement RegulatoryTailwindRadar signal module
+- [ ] Write tests for RegulatoryTailwindRadar keyword matching
+- [ ] Implement GlobalEdgeFinder signal module
+- [ ] Write tests for GlobalEdgeFinder geographic filtering
+- [ ] Implement FuturePricePathSimulation signal module with 3-path model
+- [ ] Write tests for FuturePricePathSimulation path generation
+- [ ] Set up Express server in `src/api/server.ts` with CORS and JSON middleware
+- [ ] Create `/api/signals/:signalType` route that calls appropriate signal module
+- [ ] Write tests for API routes (mock adapter injection)
+- [ ] Set up React app in `src/ui/App.tsx` with basic layout
+- [ ] Create DemoBanner component that checks for API keys and displays warning
+- [ ] Create SignalPanel component with props for title, data, and visualization type
+- [ ] Implement TimeSeriesChart component using Recharts for sentiment/price trends
+- [ ] Implement SentimentGauge component for fear compression and credibility
+- [ ] Implement PricePathChart component for future price simulation
+- [ ] Wire up App.tsx to fetch data from API and render 10 SignalPanel components
+- [ ] Add loading states and error handling to UI
+- [ ] Style dashboard with CSS/Tailwind for grid layout and responsive design
+- [ ] Add npm scripts for `dev` (concurrent API + UI), `test`, `lint`, `format`
+- [ ] Configure Vite or webpack for UI bundling and dev server
+- [ ] Test full stack: start server, load dashboard, verify all 10 panels render with mock data
+- [ ] Test real API mode: add API keys to .env, verify real data flows through
+- [ ] Write README.md with setup instructions, env var reference, and usage guide
+- [ ] Create walkthrough document or video demonstrating each signal panel
