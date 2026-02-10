@@ -88,3 +88,7 @@ Next: run ./scripts/sprint_dev.sh v2 again for the next task
 [2026-02-10 18:56:39 UTC]
 Completed task: Implement SmallCapSmartMoney signal module
 Next: run ./scripts/sprint_dev.sh v2 again for the next task
+
+[2026-02-10 18:59:44 UTC]
+Completed task: Write tests for SmallCapSmartMoney filtering
+Next: run ./scripts/sprint_dev.sh v2 again for the next task

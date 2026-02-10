@@ -21,7 +21,7 @@
 - [x] Implement CrowdedTradeExitSignal signal module
 - [x] Write tests for CrowdedTradeExitSignal logic
 - [x] Implement SmallCapSmartMoney signal module
-- [ ] Write tests for SmallCapSmartMoney filtering
+- [x] Write tests for SmallCapSmartMoney filtering
 - [ ] Implement FearCompressionScan signal module
 - [ ] Write tests for FearCompressionScan sentiment tracking
 - [ ] Implement MacroToMicroTranslation signal module
