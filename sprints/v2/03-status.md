@@ -16,3 +16,7 @@ Next: run ./scripts/sprint_dev.sh v2 again for the next task
 [2026-02-10 17:39:46 UTC]
 Completed task: Define TypeScript interfaces for SentimentAnalysis, Narrative, SignalClassification in `src/types/signals.ts`
 Next: run ./scripts/sprint_dev.sh v2 again for the next task
+
+[2026-02-10 17:40:44 UTC]
+Completed task: Define adapter interfaces (XAdapter, GrokAdapter, PriceAdapter) in `src/types/adapters.ts`
+Next: run ./scripts/sprint_dev.sh v2 again for the next task
