@@ -20,7 +20,7 @@
 - [x] Write tests for WhisperNumberTracker data transformation
 - [x] Implement CrowdedTradeExitSignal signal module
 - [x] Write tests for CrowdedTradeExitSignal logic
-- [ ] Implement SmallCapSmartMoney signal module
+- [x] Implement SmallCapSmartMoney signal module
 - [ ] Write tests for SmallCapSmartMoney filtering
 - [ ] Implement FearCompressionScan signal module
 - [ ] Write tests for FearCompressionScan sentiment tracking
