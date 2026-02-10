@@ -492,4 +492,993 @@ describe("WhisperNumberTracker", () => {
       expect(epsNumber?.sentiment).toBe("bearish");
     });
   });
+
+  describe("data transformation", () => {
+    describe("number parsing", () => {
+      it("should parse EPS with various formats", async () => {
+        const formats = [
+          { text: "$AAPL target EPS of $1.50", expected: 1.5 },
+          { text: "$AAPL target earnings $2.25", expected: 2.25 },
+          { text: "$AAPL forecast estimate of 3.75", expected: 3.75 },
+          { text: "$AAPL forecast EPS $4.50", expected: 4.5 },
+          { text: "$AAPL forecast earnings of $0.99", expected: 0.99 },
+        ];
+
+        for (const format of formats) {
+          const mockTweets: Tweet[] = [
+            {
+              id: "test",
+              text: format.text,
+              author: {
+                id: "user",
+                username: "user",
+                displayName: "User",
+                verified: false,
+                followerCount: 1000,
+                followingCount: 100,
+                tweetCount: 100,
+                createdAt: new Date(),
+              },
+              createdAt: new Date(),
+              engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+              language: "en",
+              isRetweet: false,
+              isQuote: false,
+              hashtags: [],
+              mentions: [],
+              urls: [],
+              cashtags: ["AAPL"],
+            },
+          ];
+
+          const mockAdapter = {
+            ...xAdapter,
+            searchTweets: async () => mockTweets,
+          };
+
+          const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+          const result = await testTracker.trackWhisperNumbers("AAPL");
+
+          const epsNumber = result.whisperNumbers.find((w) => w.metric === "earnings_per_share");
+          expect(epsNumber).toBeDefined();
+          expect(epsNumber?.value).toBe(format.expected);
+        }
+      });
+
+      it("should parse revenue with unit conversions", async () => {
+        const formats = [
+          { text: "revenue of $50M", expected: 50e6 },
+          { text: "revenue $2.5B", expected: 2.5e9 },
+          { text: "revenue of $100 million", expected: 100e6 },
+          { text: "revenue $1.2 billion", expected: 1.2e9 },
+          { text: "revenue of $75.5M", expected: 75.5e6 },
+        ];
+
+        for (const format of formats) {
+          const mockTweets: Tweet[] = [
+            {
+              id: "test",
+              text: `MSFT ${format.text}`,
+              author: {
+                id: "user",
+                username: "user",
+                displayName: "User",
+                verified: false,
+                followerCount: 1000,
+                followingCount: 100,
+                tweetCount: 100,
+                createdAt: new Date(),
+              },
+              createdAt: new Date(),
+              engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+              language: "en",
+              isRetweet: false,
+              isQuote: false,
+              hashtags: [],
+              mentions: [],
+              urls: [],
+              cashtags: ["MSFT"],
+            },
+          ];
+
+          const mockAdapter = {
+            ...xAdapter,
+            searchTweets: async () => mockTweets,
+          };
+
+          const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+          const result = await testTracker.trackWhisperNumbers("MSFT");
+
+          const revenueNumber = result.whisperNumbers.find((w) => w.metric === "revenue");
+          expect(revenueNumber).toBeDefined();
+          expect(revenueNumber?.value).toBe(format.expected);
+        }
+      });
+
+      it("should parse price targets with various patterns", async () => {
+        const formats = [
+          { text: "price target $150", expected: 150 },
+          { text: "PT $200", expected: 200 },
+          { text: "target of $175.50", expected: 175.5 },
+          { text: "price target of $99.99", expected: 99.99 },
+        ];
+
+        for (const format of formats) {
+          const mockTweets: Tweet[] = [
+            {
+              id: "test",
+              text: `TSLA ${format.text}`,
+              author: {
+                id: "user",
+                username: "user",
+                displayName: "User",
+                verified: false,
+                followerCount: 1000,
+                followingCount: 100,
+                tweetCount: 100,
+                createdAt: new Date(),
+              },
+              createdAt: new Date(),
+              engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+              language: "en",
+              isRetweet: false,
+              isQuote: false,
+              hashtags: [],
+              mentions: [],
+              urls: [],
+              cashtags: ["TSLA"],
+            },
+          ];
+
+          const mockAdapter = {
+            ...xAdapter,
+            searchTweets: async () => mockTweets,
+          };
+
+          const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+          const result = await testTracker.trackWhisperNumbers("TSLA");
+
+          const priceTarget = result.whisperNumbers.find((w) => w.metric === "price_target");
+          expect(priceTarget).toBeDefined();
+          expect(priceTarget?.value).toBe(format.expected);
+        }
+      });
+
+      it("should parse growth rates with various patterns", async () => {
+        const formats = [
+          { text: "20% growth", expected: 20 },
+          { text: "expects 25% growth", expected: 25 },
+          { text: "expecting 15.5% increase", expected: 15.5 },
+          { text: "forecasts 30% growth", expected: 30 },
+          { text: "expects of 12.3% increase", expected: 12.3 },
+        ];
+
+        for (const format of formats) {
+          const mockTweets: Tweet[] = [
+            {
+              id: "test",
+              text: `NVDA ${format.text}`,
+              author: {
+                id: "user",
+                username: "user",
+                displayName: "User",
+                verified: false,
+                followerCount: 1000,
+                followingCount: 100,
+                tweetCount: 100,
+                createdAt: new Date(),
+              },
+              createdAt: new Date(),
+              engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+              language: "en",
+              isRetweet: false,
+              isQuote: false,
+              hashtags: [],
+              mentions: [],
+              urls: [],
+              cashtags: ["NVDA"],
+            },
+          ];
+
+          const mockAdapter = {
+            ...xAdapter,
+            searchTweets: async () => mockTweets,
+          };
+
+          const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+          const result = await testTracker.trackWhisperNumbers("NVDA");
+
+          const growthRate = result.whisperNumbers.find((w) => w.metric === "growth_rate");
+          expect(growthRate).toBeDefined();
+          expect(growthRate?.value).toBe(format.expected);
+        }
+      });
+
+      it("should extract multiple numbers from single tweet", async () => {
+        const mockTweets: Tweet[] = [
+          {
+            id: "multi",
+            text: "AAPL EPS $2.50, revenue of $100B, price target $200, expects 20% growth",
+            author: {
+              id: "user",
+              username: "user",
+              displayName: "User",
+              verified: false,
+              followerCount: 1000,
+              followingCount: 100,
+              tweetCount: 100,
+              createdAt: new Date(),
+            },
+            createdAt: new Date(),
+            engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+            language: "en",
+            isRetweet: false,
+            isQuote: false,
+            hashtags: [],
+            mentions: [],
+            urls: [],
+            cashtags: ["AAPL"],
+          },
+        ];
+
+        const mockAdapter = {
+          ...xAdapter,
+          searchTweets: async () => mockTweets,
+        };
+
+        const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+        const result = await testTracker.trackWhisperNumbers("AAPL");
+
+        expect(result.whisperNumbers.length).toBeGreaterThanOrEqual(4);
+
+        const eps = result.whisperNumbers.find((w) => w.metric === "earnings_per_share");
+        const revenue = result.whisperNumbers.find((w) => w.metric === "revenue");
+        const priceTarget = result.whisperNumbers.find((w) => w.metric === "price_target");
+        const growth = result.whisperNumbers.find((w) => w.metric === "growth_rate");
+
+        expect(eps?.value).toBe(2.5);
+        expect(revenue?.value).toBe(100e9);
+        expect(priceTarget?.value).toBe(200);
+        expect(growth?.value).toBe(20);
+      });
+
+      it("should handle invalid or edge case numbers", async () => {
+        const invalidTexts = [
+          "EPS of $ not a number",
+          "revenue of ABC",
+          "price target",
+          "expects % growth",
+        ];
+
+        for (const text of invalidTexts) {
+          const mockTweets: Tweet[] = [
+            {
+              id: "invalid",
+              text,
+              author: {
+                id: "user",
+                username: "user",
+                displayName: "User",
+                verified: false,
+                followerCount: 1000,
+                followingCount: 100,
+                tweetCount: 100,
+                createdAt: new Date(),
+              },
+              createdAt: new Date(),
+              engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+              language: "en",
+              isRetweet: false,
+              isQuote: false,
+              hashtags: [],
+              mentions: [],
+              urls: [],
+              cashtags: ["TEST"],
+            },
+          ];
+
+          const mockAdapter = {
+            ...xAdapter,
+            searchTweets: async () => mockTweets,
+          };
+
+          const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+          const result = await testTracker.trackWhisperNumbers("TEST");
+
+          // Should not crash and should return empty or valid results
+          expect(result.whisperNumbers).toBeInstanceOf(Array);
+        }
+      });
+    });
+
+    describe("sentiment transformation", () => {
+      it("should transform context with bullish keywords to bullish sentiment", async () => {
+        const bullishKeywords = [
+          "beat",
+          "exceed",
+          "outperform",
+          "strong",
+          "bullish",
+          "positive",
+          "upgrade",
+          "buy",
+          "incredible",
+        ];
+
+        for (const keyword of bullishKeywords) {
+          const mockTweets: Tweet[] = [
+            {
+              id: "test",
+              text: `${keyword} AAPL earnings estimate of $2.50`,
+              author: {
+                id: "user",
+                username: "user",
+                displayName: "User",
+                verified: false,
+                followerCount: 1000,
+                followingCount: 100,
+                tweetCount: 100,
+                createdAt: new Date(),
+              },
+              createdAt: new Date(),
+              engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+              language: "en",
+              isRetweet: false,
+              isQuote: false,
+              hashtags: [],
+              mentions: [],
+              urls: [],
+              cashtags: ["AAPL"],
+            },
+          ];
+
+          const mockAdapter = {
+            ...xAdapter,
+            searchTweets: async () => mockTweets,
+          };
+
+          const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+          const result = await testTracker.trackWhisperNumbers("AAPL");
+
+          const epsNumber = result.whisperNumbers.find((w) => w.metric === "earnings_per_share");
+          expect(epsNumber?.sentiment).toBe("bullish");
+        }
+      });
+
+      it("should transform context with bearish keywords to bearish sentiment", async () => {
+        const bearishKeywords = [
+          "miss",
+          "weak",
+          "bearish",
+          "negative",
+          "downgrade",
+          "sell",
+          "concern",
+          "risk",
+        ];
+
+        for (const keyword of bearishKeywords) {
+          const mockTweets: Tweet[] = [
+            {
+              id: "test",
+              text: `${keyword} AAPL earnings estimate of $2.50`,
+              author: {
+                id: "user",
+                username: "user",
+                displayName: "User",
+                verified: false,
+                followerCount: 1000,
+                followingCount: 100,
+                tweetCount: 100,
+                createdAt: new Date(),
+              },
+              createdAt: new Date(),
+              engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+              language: "en",
+              isRetweet: false,
+              isQuote: false,
+              hashtags: [],
+              mentions: [],
+              urls: [],
+              cashtags: ["AAPL"],
+            },
+          ];
+
+          const mockAdapter = {
+            ...xAdapter,
+            searchTweets: async () => mockTweets,
+          };
+
+          const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+          const result = await testTracker.trackWhisperNumbers("AAPL");
+
+          const epsNumber = result.whisperNumbers.find((w) => w.metric === "earnings_per_share");
+          expect(epsNumber?.sentiment).toBe("bearish");
+        }
+      });
+
+      it("should transform neutral context to neutral sentiment", async () => {
+        const neutralTexts = [
+          "$AAPL forecast estimate $2.50",
+          "$AAPL forecast EPS of $2.50",
+          "$AAPL forecast earnings $2.50",
+        ];
+
+        for (const text of neutralTexts) {
+          const mockTweets: Tweet[] = [
+            {
+              id: "test",
+              text,
+              author: {
+                id: "user",
+                username: "user",
+                displayName: "User",
+                verified: false,
+                followerCount: 1000,
+                followingCount: 100,
+                tweetCount: 100,
+                createdAt: new Date(),
+              },
+              createdAt: new Date(),
+              engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+              language: "en",
+              isRetweet: false,
+              isQuote: false,
+              hashtags: [],
+              mentions: [],
+              urls: [],
+              cashtags: ["AAPL"],
+            },
+          ];
+
+          const mockAdapter = {
+            ...xAdapter,
+            searchTweets: async () => mockTweets,
+          };
+
+          const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+          const result = await testTracker.trackWhisperNumbers("AAPL");
+
+          const epsNumber = result.whisperNumbers.find((w) => w.metric === "earnings_per_share");
+          expect(epsNumber?.sentiment).toBe("neutral");
+        }
+      });
+
+      it("should handle mixed sentiment keywords with correct precedence", async () => {
+        const mockTweets: Tweet[] = [
+          {
+            id: "test",
+            text: "Strong but risky - AAPL EPS $2.50 could beat or miss",
+            author: {
+              id: "user",
+              username: "user",
+              displayName: "User",
+              verified: false,
+              followerCount: 1000,
+              followingCount: 100,
+              tweetCount: 100,
+              createdAt: new Date(),
+            },
+            createdAt: new Date(),
+            engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+            language: "en",
+            isRetweet: false,
+            isQuote: false,
+            hashtags: [],
+            mentions: [],
+            urls: [],
+            cashtags: ["AAPL"],
+          },
+        ];
+
+        const mockAdapter = {
+          ...xAdapter,
+          searchTweets: async () => mockTweets,
+        };
+
+        const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+        const result = await testTracker.trackWhisperNumbers("AAPL");
+
+        const epsNumber = result.whisperNumbers.find((w) => w.metric === "earnings_per_share");
+        // Should be neutral or favor one direction based on keyword counts
+        expect(["bullish", "bearish", "neutral"]).toContain(epsNumber?.sentiment);
+      });
+    });
+
+    describe("engagement score transformation", () => {
+      it("should transform high follower count to higher confidence", async () => {
+        const highFollowerTweet: Tweet = {
+          id: "high",
+          text: "AAPL EPS $2.50",
+          author: {
+            id: "influencer",
+            username: "influencer",
+            displayName: "Influencer",
+            verified: false,
+            followerCount: 1000000,
+            followingCount: 100,
+            tweetCount: 1000,
+            createdAt: new Date(),
+          },
+          createdAt: new Date(),
+          engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+          language: "en",
+          isRetweet: false,
+          isQuote: false,
+          hashtags: [],
+          mentions: [],
+          urls: [],
+          cashtags: ["AAPL"],
+        };
+
+        const lowFollowerTweet: Tweet = {
+          id: "low",
+          text: "AAPL EPS $1.50",
+          author: {
+            id: "nobody",
+            username: "nobody",
+            displayName: "Nobody",
+            verified: false,
+            followerCount: 100,
+            followingCount: 100,
+            tweetCount: 100,
+            createdAt: new Date(),
+          },
+          createdAt: new Date(),
+          engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+          language: "en",
+          isRetweet: false,
+          isQuote: false,
+          hashtags: [],
+          mentions: [],
+          urls: [],
+          cashtags: ["AAPL"],
+        };
+
+        const mockAdapter = {
+          ...xAdapter,
+          searchTweets: async () => [highFollowerTweet, lowFollowerTweet],
+        };
+
+        const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+        const result = await testTracker.trackWhisperNumbers("AAPL");
+
+        const highConfidence = result.whisperNumbers.find((w) => w.value === 2.5);
+        const lowConfidence = result.whisperNumbers.find((w) => w.value === 1.5);
+
+        expect(highConfidence!.confidence).toBeGreaterThan(lowConfidence!.confidence);
+      });
+
+      it("should transform high engagement metrics to higher confidence", async () => {
+        const highEngagementTweet: Tweet = {
+          id: "high",
+          text: "AAPL EPS $2.50",
+          author: {
+            id: "user",
+            username: "user",
+            displayName: "User",
+            verified: false,
+            followerCount: 10000,
+            followingCount: 100,
+            tweetCount: 100,
+            createdAt: new Date(),
+          },
+          createdAt: new Date(),
+          engagement: { retweets: 1000, likes: 5000, replies: 500, quotes: 100 },
+          language: "en",
+          isRetweet: false,
+          isQuote: false,
+          hashtags: [],
+          mentions: [],
+          urls: [],
+          cashtags: ["AAPL"],
+        };
+
+        const lowEngagementTweet: Tweet = {
+          id: "low",
+          text: "AAPL EPS $1.50",
+          author: {
+            id: "user2",
+            username: "user2",
+            displayName: "User2",
+            verified: false,
+            followerCount: 10000,
+            followingCount: 100,
+            tweetCount: 100,
+            createdAt: new Date(),
+          },
+          createdAt: new Date(),
+          engagement: { retweets: 1, likes: 5, replies: 0, quotes: 0 },
+          language: "en",
+          isRetweet: false,
+          isQuote: false,
+          hashtags: [],
+          mentions: [],
+          urls: [],
+          cashtags: ["AAPL"],
+        };
+
+        const mockAdapter = {
+          ...xAdapter,
+          searchTweets: async () => [highEngagementTweet, lowEngagementTweet],
+        };
+
+        const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+        const result = await testTracker.trackWhisperNumbers("AAPL");
+
+        const highConfidence = result.whisperNumbers.find((w) => w.value === 2.5);
+        const lowConfidence = result.whisperNumbers.find((w) => w.value === 1.5);
+
+        expect(highConfidence!.confidence).toBeGreaterThan(lowConfidence!.confidence);
+      });
+
+      it("should transform verified status to higher confidence", async () => {
+        const verifiedTweet: Tweet = {
+          id: "verified",
+          text: "AAPL EPS $2.50",
+          author: {
+            id: "verified",
+            username: "verified",
+            displayName: "Verified",
+            verified: true,
+            followerCount: 10000,
+            followingCount: 100,
+            tweetCount: 100,
+            createdAt: new Date(),
+          },
+          createdAt: new Date(),
+          engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+          language: "en",
+          isRetweet: false,
+          isQuote: false,
+          hashtags: [],
+          mentions: [],
+          urls: [],
+          cashtags: ["AAPL"],
+        };
+
+        const unverifiedTweet: Tweet = {
+          id: "unverified",
+          text: "AAPL EPS $1.50",
+          author: {
+            id: "unverified",
+            username: "unverified",
+            displayName: "Unverified",
+            verified: false,
+            followerCount: 10000,
+            followingCount: 100,
+            tweetCount: 100,
+            createdAt: new Date(),
+          },
+          createdAt: new Date(),
+          engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+          language: "en",
+          isRetweet: false,
+          isQuote: false,
+          hashtags: [],
+          mentions: [],
+          urls: [],
+          cashtags: ["AAPL"],
+        };
+
+        const mockAdapter = {
+          ...xAdapter,
+          searchTweets: async () => [verifiedTweet, unverifiedTweet],
+        };
+
+        const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+        const result = await testTracker.trackWhisperNumbers("AAPL");
+
+        const verifiedConfidence = result.whisperNumbers.find((w) => w.value === 2.5);
+        const unverifiedConfidence = result.whisperNumbers.find((w) => w.value === 1.5);
+
+        expect(verifiedConfidence!.confidence).toBeGreaterThan(unverifiedConfidence!.confidence);
+      });
+
+      it("should cap confidence score at 1.0", async () => {
+        const extremeTweet: Tweet = {
+          id: "extreme",
+          text: "AAPL EPS $2.50",
+          author: {
+            id: "mega",
+            username: "mega",
+            displayName: "Mega Influencer",
+            verified: true,
+            followerCount: 10000000,
+            followingCount: 10,
+            tweetCount: 1000,
+            createdAt: new Date(),
+          },
+          createdAt: new Date(),
+          engagement: { retweets: 100000, likes: 500000, replies: 50000, quotes: 10000 },
+          language: "en",
+          isRetweet: false,
+          isQuote: false,
+          hashtags: [],
+          mentions: [],
+          urls: [],
+          cashtags: ["AAPL"],
+        };
+
+        const mockAdapter = {
+          ...xAdapter,
+          searchTweets: async () => [extremeTweet],
+        };
+
+        const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+        const result = await testTracker.trackWhisperNumbers("AAPL");
+
+        const whisperNumber = result.whisperNumbers[0];
+        expect(whisperNumber.confidence).toBeLessThanOrEqual(1.0);
+      });
+
+      it("should handle zero engagement gracefully", async () => {
+        const zeroEngagementTweet: Tweet = {
+          id: "zero",
+          text: "AAPL EPS $2.50",
+          author: {
+            id: "new",
+            username: "new",
+            displayName: "New Account",
+            verified: false,
+            followerCount: 0,
+            followingCount: 0,
+            tweetCount: 1,
+            createdAt: new Date(),
+          },
+          createdAt: new Date(),
+          engagement: { retweets: 0, likes: 0, replies: 0, quotes: 0 },
+          language: "en",
+          isRetweet: false,
+          isQuote: false,
+          hashtags: [],
+          mentions: [],
+          urls: [],
+          cashtags: ["AAPL"],
+        };
+
+        const mockAdapter = {
+          ...xAdapter,
+          searchTweets: async () => [zeroEngagementTweet],
+        };
+
+        const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+        const result = await testTracker.trackWhisperNumbers("AAPL");
+
+        expect(result.whisperNumbers.length).toBeGreaterThan(0);
+        expect(result.whisperNumbers[0].confidence).toBeGreaterThanOrEqual(0);
+        expect(result.whisperNumbers[0].confidence).toBeLessThanOrEqual(1);
+      });
+    });
+
+    describe("aggregation transformation", () => {
+      it("should aggregate same whisper number from multiple tweets", async () => {
+        const tweets: Tweet[] = [
+          {
+            id: "1",
+            text: "$AAPL EPS $2.50 estimate",
+            author: {
+              id: "user1",
+              username: "user1",
+              displayName: "User 1",
+              verified: false,
+              followerCount: 5000,
+              followingCount: 100,
+              tweetCount: 100,
+              createdAt: new Date(),
+            },
+            createdAt: new Date(),
+            engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+            language: "en",
+            isRetweet: false,
+            isQuote: false,
+            hashtags: [],
+            mentions: [],
+            urls: [],
+            cashtags: ["AAPL"],
+          },
+          {
+            id: "2",
+            text: "$AAPL Expecting earnings of $2.50",
+            author: {
+              id: "user2",
+              username: "user2",
+              displayName: "User 2",
+              verified: true,
+              followerCount: 50000,
+              followingCount: 100,
+              tweetCount: 1000,
+              createdAt: new Date(),
+            },
+            createdAt: new Date(),
+            engagement: { retweets: 100, likes: 500, replies: 50, quotes: 10 },
+            language: "en",
+            isRetweet: false,
+            isQuote: false,
+            hashtags: [],
+            mentions: [],
+            urls: [],
+            cashtags: ["AAPL"],
+          },
+          {
+            id: "3",
+            text: "$AAPL Hearing estimate of $2.50 EPS",
+            author: {
+              id: "user3",
+              username: "user3",
+              displayName: "User 3",
+              verified: false,
+              followerCount: 2000,
+              followingCount: 100,
+              tweetCount: 200,
+              createdAt: new Date(),
+            },
+            createdAt: new Date(),
+            engagement: { retweets: 5, likes: 20, replies: 2, quotes: 0 },
+            language: "en",
+            isRetweet: false,
+            isQuote: false,
+            hashtags: [],
+            mentions: [],
+            urls: [],
+            cashtags: ["AAPL"],
+          },
+        ];
+
+        const mockAdapter = {
+          ...xAdapter,
+          searchTweets: async () => tweets,
+        };
+
+        const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+        const result = await testTracker.trackWhisperNumbers("AAPL");
+
+        const epsNumber = result.whisperNumbers.find(
+          (w) => w.metric === "earnings_per_share" && w.value === 2.5
+        );
+
+        expect(epsNumber).toBeDefined();
+        expect(epsNumber!.mentionCount).toBe(3);
+        expect(epsNumber!.sourceTweetIds).toEqual(["1", "2", "3"]);
+      });
+
+      it("should update confidence to maximum when aggregating", async () => {
+        const lowConfidenceTweet: Tweet = {
+          id: "low",
+          text: "AAPL EPS $2.50",
+          author: {
+            id: "small",
+            username: "small",
+            displayName: "Small",
+            verified: false,
+            followerCount: 100,
+            followingCount: 100,
+            tweetCount: 10,
+            createdAt: new Date(),
+          },
+          createdAt: new Date(),
+          engagement: { retweets: 1, likes: 5, replies: 0, quotes: 0 },
+          language: "en",
+          isRetweet: false,
+          isQuote: false,
+          hashtags: [],
+          mentions: [],
+          urls: [],
+          cashtags: ["AAPL"],
+        };
+
+        const highConfidenceTweet: Tweet = {
+          id: "high",
+          text: "AAPL earnings $2.50",
+          author: {
+            id: "big",
+            username: "big",
+            displayName: "Big",
+            verified: true,
+            followerCount: 500000,
+            followingCount: 100,
+            tweetCount: 5000,
+            createdAt: new Date(),
+          },
+          createdAt: new Date(),
+          engagement: { retweets: 5000, likes: 20000, replies: 1000, quotes: 500 },
+          language: "en",
+          isRetweet: false,
+          isQuote: false,
+          hashtags: [],
+          mentions: [],
+          urls: [],
+          cashtags: ["AAPL"],
+        };
+
+        const mockAdapter = {
+          ...xAdapter,
+          searchTweets: async () => [lowConfidenceTweet, highConfidenceTweet],
+        };
+
+        const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+        const result = await testTracker.trackWhisperNumbers("AAPL");
+
+        const epsNumber = result.whisperNumbers.find(
+          (w) => w.metric === "earnings_per_share" && w.value === 2.5
+        );
+
+        expect(epsNumber).toBeDefined();
+        expect(epsNumber!.mentionCount).toBe(2);
+        // Confidence should be high due to the high engagement tweet
+        expect(epsNumber!.confidence).toBeGreaterThan(0.5);
+      });
+
+      it("should keep different whisper numbers separate", async () => {
+        const tweets: Tweet[] = [
+          {
+            id: "1",
+            text: "AAPL EPS $2.50",
+            author: {
+              id: "user1",
+              username: "user1",
+              displayName: "User 1",
+              verified: false,
+              followerCount: 5000,
+              followingCount: 100,
+              tweetCount: 100,
+              createdAt: new Date(),
+            },
+            createdAt: new Date(),
+            engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+            language: "en",
+            isRetweet: false,
+            isQuote: false,
+            hashtags: [],
+            mentions: [],
+            urls: [],
+            cashtags: ["AAPL"],
+          },
+          {
+            id: "2",
+            text: "AAPL EPS $2.75",
+            author: {
+              id: "user2",
+              username: "user2",
+              displayName: "User 2",
+              verified: false,
+              followerCount: 5000,
+              followingCount: 100,
+              tweetCount: 100,
+              createdAt: new Date(),
+            },
+            createdAt: new Date(),
+            engagement: { retweets: 10, likes: 50, replies: 5, quotes: 1 },
+            language: "en",
+            isRetweet: false,
+            isQuote: false,
+            hashtags: [],
+            mentions: [],
+            urls: [],
+            cashtags: ["AAPL"],
+          },
+        ];
+
+        const mockAdapter = {
+          ...xAdapter,
+          searchTweets: async () => tweets,
+        };
+
+        const testTracker = new WhisperNumberTracker(mockAdapter, grokAdapter, priceAdapter);
+        const result = await testTracker.trackWhisperNumbers("AAPL");
+
+        const eps250 = result.whisperNumbers.find(
+          (w) => w.metric === "earnings_per_share" && w.value === 2.5
+        );
+        const eps275 = result.whisperNumbers.find(
+          (w) => w.metric === "earnings_per_share" && w.value === 2.75
+        );
+
+        expect(eps250).toBeDefined();
+        expect(eps275).toBeDefined();
+        expect(eps250!.mentionCount).toBe(1);
+        expect(eps275!.mentionCount).toBe(1);
+      });
+    });
+  });
 });

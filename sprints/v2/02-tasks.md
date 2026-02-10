@@ -17,7 +17,7 @@
 - [x] Write tests for PriceAdapter error handling and response parsing
 - [x] Create adapter factory that returns mock or real adapters based on env vars
 - [x] Implement WhisperNumberTracker signal module with basic tweet analysis
-- [ ] Write tests for WhisperNumberTracker data transformation
+- [x] Write tests for WhisperNumberTracker data transformation
 - [ ] Implement CrowdedTradeExitSignal signal module
 - [ ] Write tests for CrowdedTradeExitSignal logic
 - [ ] Implement SmallCapSmartMoney signal module
