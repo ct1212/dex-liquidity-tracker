@@ -8,3 +8,7 @@ FAILED task (lint): Configure environment variables in `.env.example` for X_API_
 [2026-02-10 17:38:14 UTC]
 Completed task: Configure environment variables in `.env.example` for X_API_KEY, X_API_SECRET, GROK_API_KEY, PRICE_API_KEY
 Next: run ./scripts/sprint_dev.sh v2 again for the next task
+
+[2026-02-10 17:38:56 UTC]
+Completed task: Define TypeScript interfaces for Tweet, UserProfile, EngagementMetrics in `src/types/tweets.ts`
+Next: run ./scripts/sprint_dev.sh v2 again for the next task

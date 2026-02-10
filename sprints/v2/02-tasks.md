@@ -1,6 +1,6 @@
 - [x] Set up project structure with `src/api`, `src/adapters`, `src/signals`, `src/ui` directories
 - [x] Configure environment variables in `.env.example` for X_API_KEY, X_API_SECRET, GROK_API_KEY, PRICE_API_KEY
-- [ ] Define TypeScript interfaces for Tweet, UserProfile, EngagementMetrics in `src/types/tweets.ts`
+- [x] Define TypeScript interfaces for Tweet, UserProfile, EngagementMetrics in `src/types/tweets.ts`
 - [ ] Define TypeScript interfaces for SentimentAnalysis, Narrative, SignalClassification in `src/types/signals.ts`
 - [ ] Define adapter interfaces (XAdapter, GrokAdapter, PriceAdapter) in `src/types/adapters.ts`
 - [ ] Implement MockXAdapter with sample tweet data
