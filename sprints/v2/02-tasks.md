@@ -15,7 +15,7 @@
 - [x] Write tests for GrokAdapter error handling and response parsing
 - [x] Implement real PriceAdapter using yahoo-finance2 or Alpha Vantage
 - [x] Write tests for PriceAdapter error handling and response parsing
-- [ ] Create adapter factory that returns mock or real adapters based on env vars
+- [x] Create adapter factory that returns mock or real adapters based on env vars
 - [ ] Implement WhisperNumberTracker signal module with basic tweet analysis
 - [ ] Write tests for WhisperNumberTracker data transformation
 - [ ] Implement CrowdedTradeExitSignal signal module

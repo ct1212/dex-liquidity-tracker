@@ -64,3 +64,7 @@ Next: run ./scripts/sprint_dev.sh v2 again for the next task
 [2026-02-10 18:05:25 UTC]
 Completed task: Write tests for PriceAdapter error handling and response parsing
 Next: run ./scripts/sprint_dev.sh v2 again for the next task
+
+[2026-02-10 18:08:46 UTC]
+Completed task: Create adapter factory that returns mock or real adapters based on env vars
+Next: run ./scripts/sprint_dev.sh v2 again for the next task
