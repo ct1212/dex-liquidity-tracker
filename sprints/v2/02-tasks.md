@@ -45,7 +45,7 @@
 - [x] Implement TimeSeriesChart component using Recharts for sentiment/price trends
 - [x] Implement SentimentGauge component for fear compression and credibility
 - [x] Implement PricePathChart component for future price simulation
-- [ ] Wire up App.tsx to fetch data from API and render 10 SignalPanel components
+- [x] Wire up App.tsx to fetch data from API and render 10 SignalPanel components
 - [ ] Add loading states and error handling to UI
 - [ ] Style dashboard with CSS/Tailwind for grid layout and responsive design
 - [ ] Add npm scripts for `dev` (concurrent API + UI), `test`, `lint`, `format`
