@@ -1,30 +1,62 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import App from "./App";
 
 describe("App", () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    global.fetch = vi.fn();
+    // Mock fetch to handle both DemoBanner's /api/status and signal fetches
+    global.fetch = vi.fn().mockImplementation((url: string) => {
+      if (url === "/api/status") {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({
+            mode: "mock",
+            hasXApiKey: false,
+            hasXApiSecret: false,
+            hasGrokApiKey: false,
+            hasPriceApiKey: false,
+          }),
+        });
+      }
+      // Default: return pending promise (won't resolve)
+      return new Promise(() => {});
+    });
   });
 
-  it("renders loading state initially", () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockImplementation(() => new Promise(() => {}));
-
+  it("renders idle state initially with Run Signals button", () => {
     render(<App />);
+    expect(screen.getByRole("button", { name: /run signals/i })).toBeInTheDocument();
+    expect(screen.getByText(/press the run button to fetch signal data/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Loading signals/i)).not.toBeInTheDocument();
+  });
+
+  it("renders loading state after clicking Run Signals", () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: /run signals/i }));
+
     expect(screen.getByText(/Loading signals for/i)).toBeInTheDocument();
     expect(screen.getByText(/AAPL/i)).toBeInTheDocument();
   });
 
   it("renders signal panels after successful data fetch", async () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
-      ok: true,
-      json: async () => ({ data: "test data" }),
+    (global.fetch as ReturnType<typeof vi.fn>).mockImplementation((url: string) => {
+      if (url === "/api/status") {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ mode: "mock", hasXApiKey: false, hasXApiSecret: false, hasGrokApiKey: false, hasPriceApiKey: false }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ data: "test data" }),
+      });
     });
 
     render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: /run signals/i }));
 
     await waitFor(() => {
       expect(screen.queryByText(/Loading signals/i)).not.toBeInTheDocument();
@@ -36,9 +68,18 @@ describe("App", () => {
   });
 
   it("handles fetch errors gracefully", async () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(new Error("Network error"));
+    (global.fetch as ReturnType<typeof vi.fn>).mockImplementation((url: string) => {
+      if (url === "/api/status") {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ mode: "mock", hasXApiKey: false, hasXApiSecret: false, hasGrokApiKey: false, hasPriceApiKey: false }),
+        });
+      }
+      return Promise.reject(new Error("Network error"));
+    });
 
     render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: /run signals/i }));
 
     await waitFor(() => {
       expect(screen.queryByText(/Loading signals/i)).not.toBeInTheDocument();
@@ -49,13 +90,22 @@ describe("App", () => {
   });
 
   it("handles HTTP error responses", async () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
-      ok: false,
-      statusText: "Internal Server Error",
-      json: async () => ({}),
+    (global.fetch as ReturnType<typeof vi.fn>).mockImplementation((url: string) => {
+      if (url === "/api/status") {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ mode: "mock", hasXApiKey: false, hasXApiSecret: false, hasGrokApiKey: false, hasPriceApiKey: false }),
+        });
+      }
+      return Promise.resolve({
+        ok: false,
+        statusText: "Internal Server Error",
+        json: async () => ({}),
+      });
     });
 
     render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: /run signals/i }));
 
     await waitFor(() => {
       expect(screen.queryByText(/Loading signals/i)).not.toBeInTheDocument();
@@ -65,13 +115,22 @@ describe("App", () => {
     expect(errorMessages.length).toBeGreaterThan(0);
   });
 
-  it("renders all 10 signal panels", async () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
-      ok: true,
-      json: async () => ({ data: "test" }),
+  it("renders all 10 signal panels after run", async () => {
+    (global.fetch as ReturnType<typeof vi.fn>).mockImplementation((url: string) => {
+      if (url === "/api/status") {
+        return Promise.resolve({
+          ok: true,
+          json: async () => ({ mode: "mock", hasXApiKey: false, hasXApiSecret: false, hasGrokApiKey: false, hasPriceApiKey: false }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ data: "test" }),
+      });
     });
 
     render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: /run signals/i }));
 
     await waitFor(() => {
       expect(screen.queryByText(/Loading signals/i)).not.toBeInTheDocument();
@@ -89,29 +148,24 @@ describe("App", () => {
     expect(screen.getByText("Future Price Path Simulation")).toBeInTheDocument();
   });
 
-  it("renders DemoBanner component", async () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
-      ok: true,
-      json: async () => ({ data: "test" }),
-    });
-
+  it("renders DemoBanner component", () => {
     render(<App />);
-
-    await waitFor(() => {
-      expect(screen.queryByText(/Loading signals/i)).not.toBeInTheDocument();
-    });
-
-    // DemoBanner should be present in the document
     expect(screen.getByText(/DEX Liquidity Tracker Dashboard/i)).toBeInTheDocument();
   });
 
   it("displays ticker input field", () => {
-    (global.fetch as ReturnType<typeof vi.fn>).mockImplementation(() => new Promise(() => {}));
-
     render(<App />);
 
     const tickerInput = screen.getByPlaceholderText("Enter ticker symbol") as HTMLInputElement;
     expect(tickerInput).toBeInTheDocument();
     expect(tickerInput.value).toBe("AAPL");
+  });
+
+  it("disables Run button while loading", () => {
+    render(<App />);
+    const button = screen.getByRole("button", { name: /run signals/i });
+    fireEvent.click(button);
+
+    expect(screen.getByRole("button", { name: /running/i })).toBeDisabled();
   });
 });

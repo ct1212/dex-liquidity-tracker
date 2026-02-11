@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import DemoBanner from "./DemoBanner";
 import SignalPanel from "./SignalPanel";
@@ -79,40 +79,38 @@ const DEFAULT_TICKER = "AAPL";
 const App: React.FC = () => {
   const [signalData, setSignalData] = useState<Record<string, unknown>>({});
   const [ticker, setTicker] = useState(DEFAULT_TICKER);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasRun, setHasRun] = useState<boolean>(false);
 
-  useEffect(() => {
-    const fetchSignalData = async () => {
-      setLoading(true);
-      setError(null);
-      const data: Record<string, unknown> = {};
+  const fetchSignalData = async () => {
+    setLoading(true);
+    setError(null);
+    const data: Record<string, unknown> = {};
 
-      try {
-        for (const signal of SIGNALS) {
-          try {
-            const response = await fetch(`${signal.endpoint}?ticker=${ticker}`);
-            if (response.ok) {
-              data[signal.id] = await response.json();
-            } else {
-              data[signal.id] = { error: `Failed to fetch: ${response.statusText}` };
-            }
-          } catch (error) {
-            data[signal.id] = {
-              error: error instanceof Error ? error.message : "Unknown error",
-            };
+    try {
+      for (const signal of SIGNALS) {
+        try {
+          const response = await fetch(`${signal.endpoint}?ticker=${ticker}`);
+          if (response.ok) {
+            data[signal.id] = await response.json();
+          } else {
+            data[signal.id] = { error: `Failed to fetch: ${response.statusText}` };
           }
+        } catch (error) {
+          data[signal.id] = {
+            error: error instanceof Error ? error.message : "Unknown error",
+          };
         }
-        setSignalData(data);
-      } catch (error) {
-        setError(error instanceof Error ? error.message : "Failed to load signals");
-      } finally {
-        setLoading(false);
       }
-    };
-
-    fetchSignalData();
-  }, [ticker]);
+      setSignalData(data);
+      setHasRun(true);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Failed to load signals");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="app-container">
@@ -129,6 +127,13 @@ const App: React.FC = () => {
             onChange={(e) => setTicker(e.target.value.toUpperCase())}
             placeholder="Enter ticker symbol"
           />
+          <button
+            className="run-button"
+            onClick={fetchSignalData}
+            disabled={loading || !ticker}
+          >
+            {loading ? "Running..." : "Run Signals"}
+          </button>
         </div>
       </header>
 
@@ -142,6 +147,10 @@ const App: React.FC = () => {
           <div className="loading-container">
             <div className="loading-spinner" />
             <p>Loading signals for {ticker}...</p>
+          </div>
+        ) : !hasRun ? (
+          <div className="idle-container">
+            <p>Enter a ticker symbol and press the run button to fetch signal data.</p>
           </div>
         ) : (
           <div className="signals-grid">
