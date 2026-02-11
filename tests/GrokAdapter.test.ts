@@ -1075,7 +1075,7 @@ describe("RealGrokAdapter", () => {
       await adapter.analyzeSentiment("Test text for analysis");
 
       const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
-      expect(requestBody.model).toBe("grok-beta");
+      expect(requestBody.model).toBe("grok-3");
       expect(requestBody.messages).toHaveLength(2);
       expect(requestBody.messages[0].role).toBe("system");
       expect(requestBody.messages[1].role).toBe("user");

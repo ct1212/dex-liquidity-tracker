@@ -40,40 +40,41 @@ export class AdapterFactory {
     };
   }
 
+  private isValidKey(key: string | undefined): boolean {
+    return !!key && !key.startsWith("your_") && key !== "not_required_for_yahoo_finance";
+  }
+
   /**
-   * Create an XAdapter instance (mock or real based on mode)
+   * Create an XAdapter instance.
+   * Uses real adapter only if mode is "real" AND a valid API key is present,
+   * otherwise falls back to mock.
    */
   createXAdapter(): XAdapter {
-    if (this.config.mode === "real") {
-      if (!this.config.xApiKey) {
-        throw new Error("X_API_KEY is required for real mode. Set MODE=mock to use mock adapter.");
-      }
-      return new RealXAdapter(this.config.xApiKey);
+    if (this.config.mode === "real" && this.isValidKey(this.config.xApiKey)) {
+      return new RealXAdapter(this.config.xApiKey!);
     }
     return new MockXAdapter();
   }
 
   /**
-   * Create a GrokAdapter instance (mock or real based on mode)
+   * Create a GrokAdapter instance.
+   * Uses real adapter only if mode is "real" AND a valid API key is present,
+   * otherwise falls back to mock.
    */
   createGrokAdapter(): GrokAdapter {
-    if (this.config.mode === "real") {
-      if (!this.config.grokApiKey) {
-        throw new Error(
-          "GROK_API_KEY is required for real mode. Set MODE=mock to use mock adapter."
-        );
-      }
-      return new RealGrokAdapter(this.config.grokApiKey);
+    if (this.config.mode === "real" && this.isValidKey(this.config.grokApiKey)) {
+      return new RealGrokAdapter(this.config.grokApiKey!);
     }
     return new MockGrokAdapter();
   }
 
   /**
-   * Create a PriceAdapter instance (mock or real based on mode)
+   * Create a PriceAdapter instance.
+   * Uses real adapter only if mode is "real" AND a valid API key is present,
+   * otherwise falls back to mock.
    */
   createPriceAdapter(): PriceAdapter {
-    if (this.config.mode === "real") {
-      // Price adapter doesn't require an API key (uses yahoo-finance2)
+    if (this.config.mode === "real" && this.isValidKey(this.config.priceApiKey)) {
       return new RealPriceAdapter();
     }
     return new MockPriceAdapter();

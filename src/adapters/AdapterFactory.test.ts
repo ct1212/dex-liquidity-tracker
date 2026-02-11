@@ -78,9 +78,10 @@ describe("AdapterFactory", () => {
       expect(adapter).toBeInstanceOf(RealXAdapter);
     });
 
-    it("should throw error in real mode without API key", () => {
+    it("should fall back to MockXAdapter in real mode without valid API key", () => {
       const factory = new AdapterFactory({ mode: "real" });
-      expect(() => factory.createXAdapter()).toThrow("X_API_KEY is required for real mode");
+      const adapter = factory.createXAdapter();
+      expect(adapter).toBeInstanceOf(MockXAdapter);
     });
   });
 
@@ -100,9 +101,10 @@ describe("AdapterFactory", () => {
       expect(adapter).toBeInstanceOf(RealGrokAdapter);
     });
 
-    it("should throw error in real mode without API key", () => {
+    it("should fall back to MockGrokAdapter in real mode without valid API key", () => {
       const factory = new AdapterFactory({ mode: "real" });
-      expect(() => factory.createGrokAdapter()).toThrow("GROK_API_KEY is required for real mode");
+      const adapter = factory.createGrokAdapter();
+      expect(adapter).toBeInstanceOf(MockGrokAdapter);
     });
   });
 
@@ -113,16 +115,16 @@ describe("AdapterFactory", () => {
       expect(adapter).toBeInstanceOf(MockPriceAdapter);
     });
 
-    it("should create RealPriceAdapter in real mode", () => {
-      const factory = new AdapterFactory({ mode: "real" });
+    it("should create RealPriceAdapter in real mode with valid API key", () => {
+      const factory = new AdapterFactory({ mode: "real", priceApiKey: "real-key" });
       const adapter = factory.createPriceAdapter();
       expect(adapter).toBeInstanceOf(RealPriceAdapter);
     });
 
-    it("should not require API key for real mode", () => {
+    it("should fall back to MockPriceAdapter in real mode without valid API key", () => {
       const factory = new AdapterFactory({ mode: "real" });
-      // Should not throw even without priceApiKey
-      expect(() => factory.createPriceAdapter()).not.toThrow();
+      const adapter = factory.createPriceAdapter();
+      expect(adapter).toBeInstanceOf(MockPriceAdapter);
     });
   });
 

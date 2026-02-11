@@ -54,7 +54,7 @@ export class RealGrokAdapter implements GrokAdapter {
     this.config = {
       apiKey,
       baseUrl: baseUrl || "https://api.x.ai/v1",
-      model: model || "grok-beta",
+      model: model || "grok-3",
     };
     this.baseUrl = this.config.baseUrl;
     this.model = this.config.model;

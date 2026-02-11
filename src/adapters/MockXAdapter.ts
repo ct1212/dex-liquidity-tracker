@@ -306,13 +306,31 @@ export class MockXAdapter implements XAdapter {
 
     // Filter by query (search in text, cashtags, hashtags)
     if (params.query) {
-      const queryLower = params.query.toLowerCase();
-      results = results.filter(
-        (tweet) =>
-          tweet.text.toLowerCase().includes(queryLower) ||
-          tweet.cashtags.some((tag) => tag.toLowerCase().includes(queryLower)) ||
-          tweet.hashtags.some((tag) => tag.toLowerCase().includes(queryLower))
+      // Extract cashtags ($AAPL) and plain keywords, ignoring Twitter operators like -is:retweet
+      const cashtags = (params.query.match(/\$[A-Za-z]+/g) || []).map((t) =>
+        t.slice(1).toLowerCase()
       );
+      const keywords = params.query
+        .replace(/\$[A-Za-z]+/g, "")
+        .replace(/-?is:\w+/g, "")
+        .trim()
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((w) => w.length > 0);
+
+      results = results.filter((tweet) => {
+        const matchesCashtag =
+          cashtags.length > 0 &&
+          cashtags.some((ct) => tweet.cashtags.some((tag) => tag.toLowerCase() === ct));
+        const matchesKeyword =
+          keywords.length > 0 &&
+          keywords.some(
+            (kw) =>
+              tweet.text.toLowerCase().includes(kw) ||
+              tweet.hashtags.some((tag) => tag.toLowerCase().includes(kw))
+          );
+        return matchesCashtag || matchesKeyword;
+      });
     }
 
     // Filter by time range
