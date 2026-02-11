@@ -1,3 +1,7 @@
+import { config } from "dotenv";
+// Load environment variables from .env file
+config();
+
 import express from "express";
 import cors from "cors";
 import { AdapterFactory } from "../adapters/AdapterFactory.js";

@@ -60,7 +60,9 @@ describe("Express Server", () => {
     process.env.MODE = "mock";
     process.env.X_API_KEY = "test_key";
     process.env.GROK_API_KEY = "test_grok";
-    // Leave X_API_SECRET and PRICE_API_KEY unset
+    // Explicitly delete keys we don't want set
+    delete process.env.X_API_SECRET;
+    delete process.env.PRICE_API_KEY;
 
     server = app.listen(0);
     const address = server.address();

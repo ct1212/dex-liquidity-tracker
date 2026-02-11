@@ -1,14 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { RealPriceAdapter } from "../src/adapters/PriceAdapter.js";
-import yahooFinance from "yahoo-finance2";
 
 // Mock yahoo-finance2
+const mockQuote = vi.fn();
+const mockHistorical = vi.fn();
+
 vi.mock("yahoo-finance2", () => ({
-  default: {
-    quote: vi.fn(),
-    historical: vi.fn(),
-  },
+  default: vi.fn().mockImplementation(() => ({
+    quote: mockQuote,
+    historical: mockHistorical,
+  })),
 }));
 
 describe("RealPriceAdapter", () => {
@@ -22,7 +24,7 @@ describe("RealPriceAdapter", () => {
   describe("error handling", () => {
     describe("getCurrentPrice errors", () => {
       it("throws error when quote returns undefined", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce(undefined as any);
+        mockQuote.mockResolvedValueOnce(undefined as any);
 
         await expect(adapter.getCurrentPrice("INVALID")).rejects.toThrow(
           "No price data available for ticker: INVALID"
@@ -30,7 +32,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("throws error when regularMarketPrice is undefined", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           symbol: "TEST",
           // regularMarketPrice is missing
         } as any);
@@ -41,7 +43,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("throws error when API call fails", async () => {
-        vi.mocked(yahooFinance.quote).mockRejectedValueOnce(new Error("API request failed"));
+        mockQuote.mockRejectedValueOnce(new Error("API request failed"));
 
         await expect(adapter.getCurrentPrice("TEST")).rejects.toThrow(
           "Failed to fetch current price for TEST: API request failed"
@@ -49,7 +51,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("throws error when network failure occurs", async () => {
-        vi.mocked(yahooFinance.quote).mockRejectedValueOnce(new Error("Network error"));
+        mockQuote.mockRejectedValueOnce(new Error("Network error"));
 
         await expect(adapter.getCurrentPrice("AAPL")).rejects.toThrow(
           "Failed to fetch current price for AAPL: Network error"
@@ -57,7 +59,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("handles non-Error exceptions", async () => {
-        vi.mocked(yahooFinance.quote).mockRejectedValueOnce("String error");
+        mockQuote.mockRejectedValueOnce("String error");
 
         await expect(adapter.getCurrentPrice("TEST")).rejects.toThrow(
           "Failed to fetch current price for TEST: String error"
@@ -65,19 +67,19 @@ describe("RealPriceAdapter", () => {
       });
 
       it("converts ticker to uppercase", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           regularMarketPrice: 100.0,
         } as any);
 
         await adapter.getCurrentPrice("aapl");
 
-        expect(yahooFinance.quote).toHaveBeenCalledWith("AAPL");
+        expect(mockQuote).toHaveBeenCalledWith("AAPL");
       });
     });
 
     describe("getHistoricalPrices errors", () => {
       it("throws error when historical returns empty array", async () => {
-        vi.mocked(yahooFinance.historical).mockResolvedValueOnce([]);
+        mockHistorical.mockResolvedValueOnce([]);
 
         const startDate = new Date("2024-01-01");
         const endDate = new Date("2024-01-31");
@@ -88,7 +90,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("throws error when historical returns undefined", async () => {
-        vi.mocked(yahooFinance.historical).mockResolvedValueOnce(undefined as any);
+        mockHistorical.mockResolvedValueOnce(undefined as any);
 
         const startDate = new Date("2024-01-01");
         const endDate = new Date("2024-01-31");
@@ -99,9 +101,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("throws error when API call fails", async () => {
-        vi.mocked(yahooFinance.historical).mockRejectedValueOnce(
-          new Error("Historical data unavailable")
-        );
+        mockHistorical.mockRejectedValueOnce(new Error("Historical data unavailable"));
 
         const startDate = new Date("2024-01-01");
         const endDate = new Date("2024-01-31");
@@ -112,7 +112,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("throws error when network failure occurs", async () => {
-        vi.mocked(yahooFinance.historical).mockRejectedValueOnce(new Error("Timeout"));
+        mockHistorical.mockRejectedValueOnce(new Error("Timeout"));
 
         const startDate = new Date("2024-01-01");
         const endDate = new Date("2024-01-31");
@@ -123,7 +123,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("handles non-Error exceptions", async () => {
-        vi.mocked(yahooFinance.historical).mockRejectedValueOnce("API Error");
+        mockHistorical.mockRejectedValueOnce("API Error");
 
         const startDate = new Date("2024-01-01");
         const endDate = new Date("2024-01-31");
@@ -134,7 +134,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("converts ticker to uppercase", async () => {
-        vi.mocked(yahooFinance.historical).mockResolvedValueOnce([
+        mockHistorical.mockResolvedValueOnce([
           {
             date: new Date("2024-01-01"),
             open: 100,
@@ -150,7 +150,7 @@ describe("RealPriceAdapter", () => {
 
         await adapter.getHistoricalPrices("tsla", startDate, endDate);
 
-        expect(yahooFinance.historical).toHaveBeenCalledWith(
+        expect(mockHistorical).toHaveBeenCalledWith(
           "TSLA",
           expect.objectContaining({
             period1: startDate,
@@ -163,7 +163,7 @@ describe("RealPriceAdapter", () => {
 
     describe("getLatestPrice errors", () => {
       it("throws error when quote returns undefined", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce(undefined as any);
+        mockQuote.mockResolvedValueOnce(undefined as any);
 
         await expect(adapter.getLatestPrice("INVALID")).rejects.toThrow(
           "No price data available for ticker: INVALID"
@@ -171,7 +171,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("throws error when regularMarketPrice is 0", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           regularMarketPrice: 0,
           regularMarketOpen: 0,
           regularMarketDayHigh: 0,
@@ -184,7 +184,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("throws error when all price fields are undefined", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           symbol: "TEST",
           // All price fields missing
         } as any);
@@ -195,7 +195,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("throws error when API call fails", async () => {
-        vi.mocked(yahooFinance.quote).mockRejectedValueOnce(new Error("Connection failed"));
+        mockQuote.mockRejectedValueOnce(new Error("Connection failed"));
 
         await expect(adapter.getLatestPrice("TEST")).rejects.toThrow(
           "Failed to fetch latest price for TEST: Connection failed"
@@ -203,7 +203,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("handles non-Error exceptions", async () => {
-        vi.mocked(yahooFinance.quote).mockRejectedValueOnce({ error: "Unknown" });
+        mockQuote.mockRejectedValueOnce({ error: "Unknown" });
 
         await expect(adapter.getLatestPrice("TEST")).rejects.toThrow(
           "Failed to fetch latest price for TEST: [object Object]"
@@ -211,13 +211,13 @@ describe("RealPriceAdapter", () => {
       });
 
       it("converts ticker to uppercase", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           regularMarketPrice: 150.0,
         } as any);
 
         await adapter.getLatestPrice("nvda");
 
-        expect(yahooFinance.quote).toHaveBeenCalledWith("NVDA");
+        expect(mockQuote).toHaveBeenCalledWith("NVDA");
       });
     });
   });
@@ -225,7 +225,7 @@ describe("RealPriceAdapter", () => {
   describe("response parsing", () => {
     describe("getCurrentPrice parsing", () => {
       it("parses valid quote response with regularMarketPrice", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           symbol: "AAPL",
           regularMarketPrice: 175.43,
           regularMarketTime: new Date("2024-01-15T16:00:00.000Z"),
@@ -237,7 +237,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("handles price with decimal precision", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           symbol: "TSLA",
           regularMarketPrice: 243.8475,
         } as any);
@@ -248,7 +248,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("handles whole number prices", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           symbol: "BRK.A",
           regularMarketPrice: 500000,
         } as any);
@@ -259,7 +259,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("handles low-priced stocks", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           symbol: "PENNY",
           regularMarketPrice: 0.05,
         } as any);
@@ -299,7 +299,7 @@ describe("RealPriceAdapter", () => {
           },
         ];
 
-        vi.mocked(yahooFinance.historical).mockResolvedValueOnce(mockData as any);
+        mockHistorical.mockResolvedValueOnce(mockData as any);
 
         const startDate = new Date("2024-01-01");
         const endDate = new Date("2024-01-03");
@@ -350,7 +350,7 @@ describe("RealPriceAdapter", () => {
           },
         ];
 
-        vi.mocked(yahooFinance.historical).mockResolvedValueOnce(mockData as any);
+        mockHistorical.mockResolvedValueOnce(mockData as any);
 
         const startDate = new Date("2024-01-01");
         const endDate = new Date("2024-01-03");
@@ -375,7 +375,7 @@ describe("RealPriceAdapter", () => {
           },
         ];
 
-        vi.mocked(yahooFinance.historical).mockResolvedValueOnce(mockData as any);
+        mockHistorical.mockResolvedValueOnce(mockData as any);
 
         const startDate = new Date("2024-01-15");
         const endDate = new Date("2024-01-15");
@@ -398,7 +398,7 @@ describe("RealPriceAdapter", () => {
           },
         ];
 
-        vi.mocked(yahooFinance.historical).mockResolvedValueOnce(mockData as any);
+        mockHistorical.mockResolvedValueOnce(mockData as any);
 
         const startDate = new Date("2024-01-01");
         const endDate = new Date("2024-01-01");
@@ -420,14 +420,14 @@ describe("RealPriceAdapter", () => {
           },
         ];
 
-        vi.mocked(yahooFinance.historical).mockResolvedValueOnce(mockData as any);
+        mockHistorical.mockResolvedValueOnce(mockData as any);
 
         const startDate = new Date("2024-01-01T00:00:00.000Z");
         const endDate = new Date("2024-01-31T23:59:59.999Z");
 
         await adapter.getHistoricalPrices("NVDA", startDate, endDate);
 
-        expect(yahooFinance.historical).toHaveBeenCalledWith("NVDA", {
+        expect(mockHistorical).toHaveBeenCalledWith("NVDA", {
           period1: startDate,
           period2: endDate,
           interval: "1d",
@@ -437,7 +437,7 @@ describe("RealPriceAdapter", () => {
 
     describe("getLatestPrice parsing", () => {
       it("parses complete quote with all fields", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           symbol: "AAPL",
           regularMarketPrice: 175.43,
           regularMarketTime: new Date("2024-01-15T16:00:00.000Z"),
@@ -458,7 +458,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("handles missing optional fields with fallback to regularMarketPrice", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           symbol: "TEST",
           regularMarketPrice: 100.0,
           // Missing: regularMarketOpen, regularMarketDayHigh, regularMarketDayLow, regularMarketVolume
@@ -476,7 +476,7 @@ describe("RealPriceAdapter", () => {
       it("uses current date when regularMarketTime is missing", async () => {
         const beforeCall = new Date();
 
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           symbol: "TEST",
           regularMarketPrice: 50.0,
           // Missing: regularMarketTime
@@ -491,7 +491,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("handles partial data with some fields missing", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           symbol: "TSLA",
           regularMarketPrice: 250.0,
           regularMarketTime: new Date("2024-01-20T16:00:00.000Z"),
@@ -510,7 +510,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("handles zero volume correctly", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           symbol: "LOWVOL",
           regularMarketPrice: 10.0,
           regularMarketVolume: 0,
@@ -525,7 +525,7 @@ describe("RealPriceAdapter", () => {
       it("maintains timestamp precision", async () => {
         const preciseTime = new Date("2024-01-15T15:59:59.123Z");
 
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           symbol: "AAPL",
           regularMarketPrice: 175.0,
           regularMarketTime: preciseTime,
@@ -538,7 +538,7 @@ describe("RealPriceAdapter", () => {
       });
 
       it("handles high precision price values", async () => {
-        vi.mocked(yahooFinance.quote).mockResolvedValueOnce({
+        mockQuote.mockResolvedValueOnce({
           symbol: "BTC-USD",
           regularMarketPrice: 43567.891234,
           regularMarketOpen: 43200.5,

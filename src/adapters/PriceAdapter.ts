@@ -2,7 +2,7 @@
  * Real implementation of PriceAdapter using yahoo-finance2
  */
 
-import yahooFinance from "yahoo-finance2";
+import YahooFinanceClass from "yahoo-finance2";
 import type { PriceAdapter, PriceDataPoint } from "../types/adapters.js";
 
 // Type definitions for yahoo-finance2 responses
@@ -25,9 +25,16 @@ interface YahooHistoricalQuote {
 }
 
 export class RealPriceAdapter implements PriceAdapter {
+  private yahooFinance: InstanceType<typeof YahooFinanceClass>;
+
+  constructor() {
+    // Initialize yahoo-finance2 v3 (requires explicit instantiation)
+    this.yahooFinance = new YahooFinanceClass();
+  }
+
   async getCurrentPrice(ticker: string): Promise<number> {
     try {
-      const quote = (await yahooFinance.quote(ticker.toUpperCase())) as YahooQuoteResponse;
+      const quote = (await this.yahooFinance.quote(ticker.toUpperCase())) as YahooQuoteResponse;
 
       if (!quote || quote.regularMarketPrice === undefined) {
         throw new Error(`No price data available for ticker: ${ticker}`);
@@ -53,7 +60,7 @@ export class RealPriceAdapter implements PriceAdapter {
         interval: "1d" as const,
       };
 
-      const result = (await yahooFinance.historical(
+      const result = (await this.yahooFinance.historical(
         ticker.toUpperCase(),
         queryOptions
       )) as YahooHistoricalQuote[];
@@ -83,7 +90,7 @@ export class RealPriceAdapter implements PriceAdapter {
 
   async getLatestPrice(ticker: string): Promise<PriceDataPoint> {
     try {
-      const quote = (await yahooFinance.quote(ticker.toUpperCase())) as YahooQuoteResponse;
+      const quote = (await this.yahooFinance.quote(ticker.toUpperCase())) as YahooQuoteResponse;
 
       if (!quote) {
         throw new Error(`No price data available for ticker: ${ticker}`);
