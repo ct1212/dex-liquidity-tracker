@@ -220,3 +220,36 @@ Next: run ./scripts/sprint_dev.sh v2 again for the next task
 [2026-02-11 03:32:24 UTC]
 Completed task: Create walkthrough document or video demonstrating each signal panel
 Next: run ./scripts/sprint_dev.sh v2 again for the next task
+
+[2026-02-11 03:47:00 UTC]
+ALL SPRINT V2 TASKS COMPLETE (56/56 tasks done)
+- 629 tests passing across 26 test files
+- Lint clean
+
+[2026-02-11 04:00:00 UTC]
+Deployed to Vercel.
+- Live URL: https://dex-liquidity-tracker.vercel.app
+- Added api/index.ts (serverless function wrapper for Express app)
+- Added api/tsconfig.json (relaxed TS for serverless build)
+- Added vercel.json (build config + API rewrites)
+- Fixed TS strict errors in GrokAdapter, FearCompressionScan, server.ts
+- Set MODE=mock in Vercel env vars (real mode was failing due to invalid API keys)
+- Pushed all commits to origin/main
+
+## What to do next
+
+1. **To switch to live data**, get valid API keys and set them in Vercel project settings:
+   - `X_API_KEY` + `X_API_SECRET` — X/Twitter API v2 (developer.x.com)
+   - `GROK_API_KEY` — xAI Grok API (for sentiment/narrative analysis)
+   - `PRICE_API_KEY` — Alpha Vantage or similar (optional, Yahoo Finance works without key)
+   - Then change `MODE` from `mock` to `real` in Vercel env vars and redeploy (`npx vercel --prod`)
+
+2. **To run locally**: `npm run dev` (starts API on :3002 + Vite on :5173)
+
+3. **Potential improvements for a v3 sprint**:
+   - Add WebSocket or polling for real-time signal updates
+   - Add historical signal tracking / persistence (database)
+   - Add user watchlists (multiple tickers)
+   - Improve chart visualizations (more Recharts usage per panel)
+   - Add authentication for the dashboard
+   - Rate limiting on API endpoints
