@@ -5,9 +5,13 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:ui\"",
+    "dev:api": "tsx watch src/api/server.ts",
+    "dev:ui": "tsx watch src/ui/index.tsx",
     "test": "vitest run",
-    "build": "tsc",
     "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "build": "tsc",
     "lint:fix": "eslint --fix . && prettier --write .",
     "start": "node dist/cli.js"
   },
@@ -28,6 +32,7 @@
     "@types/node": "^25.2.3",
     "@types/react": "^19.2.13",
     "@types/react-dom": "^19.2.3",
+    "concurrently": "^9.2.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "jsdom": "^28.0.0",

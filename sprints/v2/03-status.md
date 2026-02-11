@@ -196,3 +196,7 @@ Next: run ./scripts/sprint_dev.sh v2 again for the next task
 [2026-02-11 02:59:42 UTC]
 Completed task: Style dashboard with CSS/Tailwind for grid layout and responsive design
 Next: run ./scripts/sprint_dev.sh v2 again for the next task
+
+[2026-02-11 03:01:52 UTC]
+Completed task: Add npm scripts for `dev` (concurrent API + UI), `test`, `lint`, `format`
+Next: run ./scripts/sprint_dev.sh v2 again for the next task
