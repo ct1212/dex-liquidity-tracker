@@ -9,7 +9,7 @@
 .sentiment-gauge-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #374151;
+  color: #e0e0e0;
   text-align: center;
 }
 
@@ -19,8 +19,20 @@
 
 .sentiment-gauge-value {
   user-select: none;
+  fill: #ffffff;
 }
 
 .sentiment-gauge-status {
   user-select: none;
+  fill: #a0a0a0;
+}
+
+@media (max-width: 768px) {
+  .sentiment-gauge-container {
+    padding: 0.75rem;
+  }
+
+  .sentiment-gauge-label {
+    font-size: 0.8rem;
+  }
 }

@@ -155,13 +155,33 @@
   margin-right: 0.5rem;
 }
 
+/* Tablet responsive adjustments */
+@media (max-width: 1024px) {
+  .signal-table {
+    font-size: 0.85rem;
+  }
+
+  .signal-table th,
+  .signal-table td {
+    padding: 0.5rem;
+  }
+}
+
+/* Mobile responsive adjustments */
 @media (max-width: 768px) {
   .signal-panel-header {
     padding: 0.75rem 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
 
   .signal-panel-title {
     font-size: 1rem;
+  }
+
+  .signal-panel-type {
+    font-size: 0.7rem;
   }
 
   .signal-panel-body {
@@ -170,5 +190,44 @@
 
   .data-preview {
     font-size: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .signal-table {
+    font-size: 0.8rem;
+  }
+
+  .signal-table th,
+  .signal-table td {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .signal-list li {
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .signal-panel-header {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .signal-panel-title {
+    font-size: 0.9rem;
+  }
+
+  .signal-panel-body {
+    padding: 0.75rem;
+  }
+
+  .signal-table {
+    font-size: 0.75rem;
+  }
+
+  .signal-table th,
+  .signal-table td {
+    padding: 0.4rem 0.2rem;
   }
 }
