@@ -160,3 +160,7 @@ Next: run ./scripts/sprint_dev.sh v2 again for the next task
 [2026-02-10 19:59:14 UTC]
 Completed task: Write tests for API routes (mock adapter injection)
 Next: run ./scripts/sprint_dev.sh v2 again for the next task
+
+[2026-02-11 02:33:30 UTC]
+Completed task: Set up React app in `src/ui/App.tsx` with basic layout
+Next: run ./scripts/sprint_dev.sh v2 again for the next task

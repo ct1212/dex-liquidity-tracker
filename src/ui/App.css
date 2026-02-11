@@ -1,0 +1,104 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+    "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #0a0e27;
+  color: #e0e0e0;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: linear-gradient(135deg, #1a1f3a 0%, #2d3561 100%);
+  padding: 2rem;
+  text-align: center;
+  border-bottom: 2px solid #3d4785;
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+}
+
+.app-header p {
+  font-size: 1rem;
+  color: #a0a0a0;
+}
+
+.app-main {
+  flex: 1;
+  padding: 2rem;
+}
+
+.signals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.signal-placeholder {
+  background: #151a35;
+  border: 1px solid #2d3561;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.signal-placeholder:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(61, 71, 133, 0.3);
+}
+
+.signal-placeholder h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+}
+
+.signal-placeholder p {
+  font-size: 0.9rem;
+  color: #a0a0a0;
+}
+
+.app-footer {
+  background: #0d1129;
+  padding: 1rem;
+  text-align: center;
+  border-top: 1px solid #2d3561;
+}
+
+.app-footer p {
+  font-size: 0.875rem;
+  color: #606060;
+}
+
+@media (max-width: 768px) {
+  .signals-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .app-main {
+    padding: 1rem;
+  }
+}

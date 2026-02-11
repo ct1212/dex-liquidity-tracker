@@ -39,7 +39,7 @@
 - [x] Set up Express server in `src/api/server.ts` with CORS and JSON middleware
 - [x] Create `/api/signals/:signalType` route that calls appropriate signal module
 - [x] Write tests for API routes (mock adapter injection)
-- [ ] Set up React app in `src/ui/App.tsx` with basic layout
+- [x] Set up React app in `src/ui/App.tsx` with basic layout
 - [ ] Create DemoBanner component that checks for API keys and displays warning
 - [ ] Create SignalPanel component with props for title, data, and visualization type
 - [ ] Implement TimeSeriesChart component using Recharts for sentiment/price trends
