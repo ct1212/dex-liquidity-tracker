@@ -42,7 +42,7 @@
 - [x] Set up React app in `src/ui/App.tsx` with basic layout
 - [x] Create DemoBanner component that checks for API keys and displays warning
 - [x] Create SignalPanel component with props for title, data, and visualization type
-- [ ] Implement TimeSeriesChart component using Recharts for sentiment/price trends
+- [x] Implement TimeSeriesChart component using Recharts for sentiment/price trends
 - [ ] Implement SentimentGauge component for fear compression and credibility
 - [ ] Implement PricePathChart component for future price simulation
 - [ ] Wire up App.tsx to fetch data from API and render 10 SignalPanel components
