@@ -50,7 +50,7 @@
 - [x] Style dashboard with CSS/Tailwind for grid layout and responsive design
 - [x] Add npm scripts for `dev` (concurrent API + UI), `test`, `lint`, `format`
 - [x] Configure Vite or webpack for UI bundling and dev server
-- [ ] Test full stack: start server, load dashboard, verify all 10 panels render with mock data
+- [x] Test full stack: start server, load dashboard, verify all 10 panels render with mock data
 - [ ] Test real API mode: add API keys to .env, verify real data flows through
 - [ ] Write README.md with setup instructions, env var reference, and usage guide
 - [ ] Create walkthrough document or video demonstrating each signal panel

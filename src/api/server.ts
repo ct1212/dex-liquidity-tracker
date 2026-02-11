@@ -13,7 +13,7 @@ import { GlobalEdgeFinder } from "../signals/GlobalEdgeFinder.js";
 import { FuturePricePathSimulation } from "../signals/FuturePricePathSimulation.js";
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
 // Middleware
 app.use(cors());
@@ -137,6 +137,11 @@ export function startServer(port: number = PORT) {
   return app.listen(port, () => {
     console.log(`Server running on port ${port}`);
   });
+}
+
+// Start server if running directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  startServer();
 }
 
 export { app };
