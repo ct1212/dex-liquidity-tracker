@@ -306,7 +306,10 @@ export class FearCompressionScan {
   ): Promise<number> {
     try {
       // Get price action during fear period
-      const historicalPrices = await this.priceAdapter.getHistoricalPrices(ticker, 30);
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 30);
+      const historicalPrices = await this.priceAdapter.getHistoricalPrices(ticker, startDate, endDate);
 
       if (historicalPrices.length < 2) {
         return 0.5; // Default if no price data

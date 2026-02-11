@@ -17,7 +17,7 @@ import { GlobalEdgeFinder } from "../signals/GlobalEdgeFinder.js";
 import { FuturePricePathSimulation } from "../signals/FuturePricePathSimulation.js";
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = Number(process.env.PORT) || 3002;
 
 // Middleware
 app.use(cors());

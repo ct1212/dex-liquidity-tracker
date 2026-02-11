@@ -192,16 +192,18 @@ Only respond with the JSON array, no additional text.`;
       const parsed = JSON.parse(jsonMatch[0]);
 
       const now = new Date();
-      const narratives: Narrative[] = parsed.map((item: Record<string, unknown>, idx: number) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const parsedArray = parsed as any[];
+      const narratives: Narrative[] = parsedArray.map((item, idx) => {
         // Get tweet IDs from the indices
-        const topTweetIds = (item.tweetIndices || [])
+        const topTweetIds = ((item.tweetIndices || []) as number[])
           .slice(0, 5)
           .map((i: number) => (tweets[i - 1] ? tweets[i - 1].id : null))
-          .filter((id: string | null) => id !== null);
+          .filter((id: string | null): id is string => id !== null);
 
         // Get timestamps from referenced tweets
         const relevantTweets = topTweetIds
-          .map((id) => tweets.find((t) => t.id === id))
+          .map((id: string) => tweets.find((t) => t.id === id))
           .filter((t): t is Tweet => t !== undefined);
         const startedAt =
           relevantTweets.length > 0
@@ -214,23 +216,23 @@ Only respond with the JSON array, no additional text.`;
 
         return {
           id: `narrative-grok-${now.getTime()}-${idx}`,
-          title: item.title,
-          description: item.description,
-          category: item.category,
+          title: String(item.title || ""),
+          description: String(item.description || ""),
+          category: (item.category || "other") as Narrative["category"],
           sentiment: {
-            score: item.sentimentScore,
-            label: item.sentimentLabel,
-            confidence: item.confidence,
-            reasoning: item.reasoning,
-            keywords: item.keywords || [],
+            score: Number(item.sentimentScore || 0),
+            label: (item.sentimentLabel || "neutral") as "bullish" | "bearish" | "neutral",
+            confidence: Number(item.confidence || 0.5),
+            reasoning: String(item.reasoning || ""),
+            keywords: (item.keywords || []) as string[],
             analyzedAt: now,
           },
           tweetCount: topTweetIds.length,
           topTweetIds,
           startedAt,
           lastSeenAt,
-          momentum: item.momentum,
-          relatedTickers: item.relatedTickers || [],
+          momentum: (item.momentum || "stable") as Narrative["momentum"],
+          relatedTickers: (item.relatedTickers || []) as string[],
         };
       });
 
