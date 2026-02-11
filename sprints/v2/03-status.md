@@ -216,3 +216,7 @@ Next: run ./scripts/sprint_dev.sh v2 again for the next task
 [2026-02-11 03:26:38 UTC]
 Completed task: Write README.md with setup instructions, env var reference, and usage guide
 Next: run ./scripts/sprint_dev.sh v2 again for the next task
+
+[2026-02-11 03:32:24 UTC]
+Completed task: Create walkthrough document or video demonstrating each signal panel
+Next: run ./scripts/sprint_dev.sh v2 again for the next task

@@ -53,4 +53,4 @@
 - [x] Test full stack: start server, load dashboard, verify all 10 panels render with mock data
 - [x] Test real API mode: add API keys to .env, verify real data flows through
 - [x] Write README.md with setup instructions, env var reference, and usage guide
-- [ ] Create walkthrough document or video demonstrating each signal panel
+- [x] Create walkthrough document or video demonstrating each signal panel
