@@ -1,0 +1,26 @@
+.sentiment-gauge-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+
+.sentiment-gauge-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  text-align: center;
+}
+
+.sentiment-gauge-svg {
+  overflow: visible;
+}
+
+.sentiment-gauge-value {
+  user-select: none;
+}
+
+.sentiment-gauge-status {
+  user-select: none;
+}
