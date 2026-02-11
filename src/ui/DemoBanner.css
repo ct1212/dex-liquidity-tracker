@@ -1,0 +1,79 @@
+.demo-banner {
+  background: linear-gradient(135deg, #4a3f00 0%, #6b5500 100%);
+  border-bottom: 2px solid #8b7000;
+  padding: 1rem;
+}
+
+.demo-banner-content {
+  display: flex;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  gap: 1rem;
+}
+
+.demo-banner-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.demo-banner-message {
+  flex: 1;
+}
+
+.demo-banner-message strong {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  color: #ffd700;
+}
+
+.demo-banner-message p {
+  font-size: 0.875rem;
+  margin: 0;
+  color: #f0e68c;
+  line-height: 1.4;
+}
+
+.demo-banner-message code {
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 0.125rem 0.375rem;
+  border-radius: 3px;
+  font-family: "Courier New", monospace;
+  font-size: 0.8rem;
+  color: #ffffff;
+}
+
+.demo-banner-close {
+  background: transparent;
+  border: none;
+  color: #f0e68c;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.demo-banner-close:hover {
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .demo-banner-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .demo-banner-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .demo-banner {
+    position: relative;
+  }
+}

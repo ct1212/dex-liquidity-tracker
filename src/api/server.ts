@@ -24,6 +24,18 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
+// API status endpoint - check mode and API key configuration
+app.get("/api/status", (req, res) => {
+  const mode = process.env.MODE === "real" ? "real" : "mock";
+  res.json({
+    mode,
+    hasXApiKey: !!process.env.X_API_KEY,
+    hasXApiSecret: !!process.env.X_API_SECRET,
+    hasGrokApiKey: !!process.env.GROK_API_KEY,
+    hasPriceApiKey: !!process.env.PRICE_API_KEY,
+  });
+});
+
 // Signal endpoint
 app.get("/api/signals/:signalType", async (req, res) => {
   try {

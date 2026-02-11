@@ -1,9 +1,11 @@
 import React from "react";
 import "./App.css";
+import DemoBanner from "./DemoBanner";
 
 const App: React.FC = () => {
   return (
     <div className="app-container">
+      <DemoBanner />
       <header className="app-header">
         <h1>DEX Liquidity Tracker Dashboard</h1>
         <p>Signal Analysis & Market Intelligence</p>

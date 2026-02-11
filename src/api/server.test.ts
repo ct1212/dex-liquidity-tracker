@@ -53,6 +53,52 @@ describe("Express Server", () => {
 
     expect(response.headers.get("access-control-allow-origin")).toBe("*");
   });
+
+  it("should return API status with mode and key availability", async () => {
+    // Set some environment variables for the test
+    const originalEnv = { ...process.env };
+    process.env.MODE = "mock";
+    process.env.X_API_KEY = "test_key";
+    process.env.GROK_API_KEY = "test_grok";
+    // Leave X_API_SECRET and PRICE_API_KEY unset
+
+    server = app.listen(0);
+    const address = server.address();
+    const port = typeof address === "object" && address ? address.port : 0;
+
+    const response = await fetch(`http://localhost:${port}/api/status`);
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data).toEqual({
+      mode: "mock",
+      hasXApiKey: true,
+      hasXApiSecret: false,
+      hasGrokApiKey: true,
+      hasPriceApiKey: false,
+    });
+
+    // Restore original environment
+    process.env = originalEnv;
+  });
+
+  it("should default to mock mode when MODE is not set", async () => {
+    const originalEnv = { ...process.env };
+    delete process.env.MODE;
+
+    server = app.listen(0);
+    const address = server.address();
+    const port = typeof address === "object" && address ? address.port : 0;
+
+    const response = await fetch(`http://localhost:${port}/api/status`);
+    const data = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(data.mode).toBe("mock");
+
+    // Restore original environment
+    process.env = originalEnv;
+  });
 });
 
 describe("Signal API Routes", () => {

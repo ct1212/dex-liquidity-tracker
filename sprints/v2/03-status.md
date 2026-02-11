@@ -164,3 +164,7 @@ Next: run ./scripts/sprint_dev.sh v2 again for the next task
 [2026-02-11 02:33:30 UTC]
 Completed task: Set up React app in `src/ui/App.tsx` with basic layout
 Next: run ./scripts/sprint_dev.sh v2 again for the next task
+
+[2026-02-11 02:36:41 UTC]
+Completed task: Create DemoBanner component that checks for API keys and displays warning
+Next: run ./scripts/sprint_dev.sh v2 again for the next task
