@@ -1,0 +1,153 @@
+.signal-panel {
+  background: #151a35;
+  border: 1px solid #2d3561;
+  border-radius: 8px;
+  overflow: hidden;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.signal-panel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(61, 71, 133, 0.3);
+}
+
+.signal-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #1a1f3a 0%, #252b4f 100%);
+  border-bottom: 1px solid #2d3561;
+}
+
+.signal-panel-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.signal-panel-type {
+  font-size: 0.75rem;
+  color: #a0a0a0;
+  background: #0d1129;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.signal-panel-body {
+  padding: 1.5rem;
+  flex: 1;
+  overflow: auto;
+}
+
+.signal-content-text,
+.signal-content-chart,
+.signal-content-gauge,
+.signal-content-table,
+.signal-content-list,
+.signal-content-default {
+  color: #e0e0e0;
+}
+
+.no-data {
+  color: #808080;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+}
+
+.data-preview {
+  background: #0d1129;
+  border: 1px solid #2d3561;
+  border-radius: 4px;
+  padding: 1rem;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  color: #d0d0d0;
+  font-family: "Courier New", monospace;
+}
+
+.signal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.signal-table thead {
+  background: #1a1f3a;
+  border-bottom: 2px solid #3d4785;
+}
+
+.signal-table th {
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: #ffffff;
+  text-transform: capitalize;
+}
+
+.signal-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #2d3561;
+  color: #d0d0d0;
+}
+
+.signal-table tbody tr:hover {
+  background: #1a1f3a;
+}
+
+.signal-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.signal-list li {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: #0d1129;
+  border: 1px solid #2d3561;
+  border-radius: 4px;
+  color: #d0d0d0;
+  font-size: 0.9rem;
+}
+
+.signal-list li:last-child {
+  margin-bottom: 0;
+}
+
+.signal-content-chart,
+.signal-content-gauge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: #808080;
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .signal-panel-header {
+    padding: 0.75rem 1rem;
+  }
+
+  .signal-panel-title {
+    font-size: 1rem;
+  }
+
+  .signal-panel-body {
+    padding: 1rem;
+  }
+
+  .data-preview {
+    font-size: 0.75rem;
+  }
+}
