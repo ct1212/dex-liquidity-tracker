@@ -16,6 +16,14 @@
   box-shadow: 0 4px 12px rgba(61, 71, 133, 0.3);
 }
 
+.signal-panel-error {
+  border-color: #8b3434;
+}
+
+.signal-panel-error:hover {
+  box-shadow: 0 4px 12px rgba(139, 52, 52, 0.3);
+}
+
 .signal-panel-header {
   display: flex;
   justify-content: space-between;
@@ -132,6 +140,19 @@
   min-height: 200px;
   color: #808080;
   font-style: italic;
+}
+
+.signal-error {
+  background-color: #3d1f1f;
+  border: 1px solid #8b3434;
+  border-radius: 4px;
+  padding: 1rem;
+  color: #ffcccc;
+}
+
+.signal-error strong {
+  color: #ff6666;
+  margin-right: 0.5rem;
 }
 
 @media (max-width: 768px) {

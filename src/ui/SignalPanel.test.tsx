@@ -136,4 +136,34 @@ describe("SignalPanel", () => {
     expect(html).toContain("First");
     expect(html).toContain("Second");
   });
+
+  it("renders error state when data contains error property", () => {
+    const data = { error: "Failed to fetch data" };
+    const html = renderToString(
+      <SignalPanel title="Error Panel" data={data} visualizationType="text" />
+    );
+    expect(html).toContain("Error Panel");
+    expect(html).toContain("signal-error");
+    expect(html).toContain("Failed to fetch data");
+    expect(html).toContain("signal-panel-error");
+  });
+
+  it("renders error state with different visualization types", () => {
+    const data = { error: "Network error" };
+    const html = renderToString(
+      <SignalPanel title="Chart Error" data={data} visualizationType="chart" />
+    );
+    expect(html).toContain("Chart Error");
+    expect(html).toContain("signal-error");
+    expect(html).toContain("Network error");
+  });
+
+  it("does not render visualization when error is present", () => {
+    const data = { error: "API error" };
+    const html = renderToString(
+      <SignalPanel title="Error Test" data={data} visualizationType="chart" />
+    );
+    expect(html).not.toContain("Chart visualization (placeholder)");
+    expect(html).toContain("API error");
+  });
 });

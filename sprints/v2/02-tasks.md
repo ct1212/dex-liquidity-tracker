@@ -46,7 +46,7 @@
 - [x] Implement SentimentGauge component for fear compression and credibility
 - [x] Implement PricePathChart component for future price simulation
 - [x] Wire up App.tsx to fetch data from API and render 10 SignalPanel components
-- [ ] Add loading states and error handling to UI
+- [x] Add loading states and error handling to UI
 - [ ] Style dashboard with CSS/Tailwind for grid layout and responsive design
 - [ ] Add npm scripts for `dev` (concurrent API + UI), `test`, `lint`, `format`
 - [ ] Configure Vite or webpack for UI bundling and dev server

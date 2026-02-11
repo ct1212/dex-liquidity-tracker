@@ -10,7 +10,17 @@ export interface SignalPanelProps {
 }
 
 const SignalPanel: React.FC<SignalPanelProps> = ({ title, data, visualizationType }) => {
+  const hasError = data && typeof data === "object" && "error" in data;
+
   const renderContent = () => {
+    if (hasError) {
+      return (
+        <div className="signal-error" role="alert">
+          <strong>Error:</strong> {String((data as { error: unknown }).error)}
+        </div>
+      );
+    }
+
     switch (visualizationType) {
       case "text":
         return <div className="signal-content-text">{renderTextContent()}</div>;
@@ -86,7 +96,7 @@ const SignalPanel: React.FC<SignalPanelProps> = ({ title, data, visualizationTyp
   };
 
   return (
-    <div className="signal-panel">
+    <div className={`signal-panel ${hasError ? "signal-panel-error" : ""}`}>
       <div className="signal-panel-header">
         <h3 className="signal-panel-title">{title}</h3>
         <span className="signal-panel-type">{visualizationType}</span>

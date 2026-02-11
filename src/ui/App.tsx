@@ -79,27 +79,36 @@ const DEFAULT_TICKER = "AAPL";
 const App: React.FC = () => {
   const [signalData, setSignalData] = useState<Record<string, unknown>>({});
   const [ticker, setTicker] = useState(DEFAULT_TICKER);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSignalData = async () => {
+      setLoading(true);
+      setError(null);
       const data: Record<string, unknown> = {};
 
-      for (const signal of SIGNALS) {
-        try {
-          const response = await fetch(`${signal.endpoint}?ticker=${ticker}`);
-          if (response.ok) {
-            data[signal.id] = await response.json();
-          } else {
-            data[signal.id] = { error: `Failed to fetch: ${response.statusText}` };
+      try {
+        for (const signal of SIGNALS) {
+          try {
+            const response = await fetch(`${signal.endpoint}?ticker=${ticker}`);
+            if (response.ok) {
+              data[signal.id] = await response.json();
+            } else {
+              data[signal.id] = { error: `Failed to fetch: ${response.statusText}` };
+            }
+          } catch (error) {
+            data[signal.id] = {
+              error: error instanceof Error ? error.message : "Unknown error",
+            };
           }
-        } catch (error) {
-          data[signal.id] = {
-            error: error instanceof Error ? error.message : "Unknown error",
-          };
         }
+        setSignalData(data);
+      } catch (error) {
+        setError(error instanceof Error ? error.message : "Failed to load signals");
+      } finally {
+        setLoading(false);
       }
-
-      setSignalData(data);
     };
 
     fetchSignalData();
@@ -124,16 +133,28 @@ const App: React.FC = () => {
       </header>
 
       <main className="app-main">
-        <div className="signals-grid">
-          {SIGNALS.map((signal) => (
-            <SignalPanel
-              key={signal.id}
-              title={signal.title}
-              data={signalData[signal.id]}
-              visualizationType={signal.visualizationType}
-            />
-          ))}
-        </div>
+        {error && (
+          <div className="error-banner" role="alert">
+            <strong>Error:</strong> {error}
+          </div>
+        )}
+        {loading ? (
+          <div className="loading-container">
+            <div className="loading-spinner" />
+            <p>Loading signals for {ticker}...</p>
+          </div>
+        ) : (
+          <div className="signals-grid">
+            {SIGNALS.map((signal) => (
+              <SignalPanel
+                key={signal.id}
+                title={signal.title}
+                data={signalData[signal.id]}
+                visualizationType={signal.visualizationType}
+              />
+            ))}
+          </div>
+        )}
       </main>
 
       <footer className="app-footer">
